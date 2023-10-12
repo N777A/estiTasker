@@ -3,6 +3,7 @@ import { AppProps } from "next/app";
 import PropTypes from "prop-types";
 import { requireAuthentication } from "../auth";
 import { useRouter } from "next/router";
+import Navbar from '../components/Navbar'
 
 function MyApp(props: AppProps) {
   const router = useRouter();
@@ -12,7 +13,10 @@ function MyApp(props: AppProps) {
   React.useEffect(requireAuthentication(currentPath), []);
 
   return (
-          <Component {...pageProps} />
+          <>
+            <Navbar />
+            <Component {...pageProps} />
+          </>
   );
 }
 

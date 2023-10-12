@@ -54,7 +54,6 @@ export default function SignUp() {
           password: data.get('password'),
           password_confirmation: data.get('password_confirmation'),
         });
-
         setCookie(null, 'uid', response.headers["uid"], {
           path: "/",
         });
@@ -91,16 +90,16 @@ export default function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            新規登録
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  name="name"
                   required
                   fullWidth
-                  label="Name"
+                  name="name"
+                  label="名前"
                   type="text"
                   autoFocus
                 />
@@ -109,8 +108,8 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  label="Email Address"
                   name="email"
+                  label="Email"
                   type="email"
                 />
               </Grid>
@@ -119,7 +118,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   name='password'
-                  label="Password"
+                  label="パスワード"
                   type="password"
                 />
               </Grid>
@@ -128,7 +127,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password_confirmation"
-                  label="Password"
+                  label="確認用パスワード"
                   type="password"
                 />
               </Grid>
@@ -139,7 +138,7 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              新規登録
             </Button>
             {isError ? (
               <Alert
@@ -155,7 +154,7 @@ export default function SignUp() {
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="../sign_in" variant="body2">
-                  Already have an account? Sign in
+                  すでにアカウントを作成している場合はこちら
                 </Link>
               </Grid>
             </Grid>

@@ -192,6 +192,7 @@ DEPENDENCIES
   devise
   devise_token_auth
   listen (~> 3.3)
+  nokogiri (= 1.15.4)
   puma (~> 5.0)
   rack-cors
   rails (~> 6.1.3, >= 6.1.3.2)

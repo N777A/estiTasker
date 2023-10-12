@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-import { setCookie, destroyCookie } from "nookies";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import router from 'next/router';
 
 function Copyright(props: any) {
@@ -37,6 +37,11 @@ export default function SignIn() {
   const [isError, setIsError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  console.log(
+    parseCookies().client,
+    parseCookies().uid,
+    parseCookies()["access-token"]
+  );
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -51,10 +56,11 @@ export default function SignIn() {
       setIsError(false);
       setErrorMessage("");
       try {
-        const response = await axiosInstance.post("auth", {
+        const response = await axiosInstance.post("auth/sign_in", {
           email: data.get("email"),
           password: data.get("password"),
         });
+        console.log(response)
         setCookie(null, "uid", response.headers["uid"], {
           path: "/",
         });
@@ -66,7 +72,7 @@ export default function SignIn() {
         });
         console.log(response);
 
-        router.push("/dashboard");
+        router.push("/home");
       } catch (err) {
         destroyCookie(null, "uid");
         destroyCookie(null, "client");
@@ -93,16 +99,15 @@ export default function SignIn() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            ログイン
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
               name="email"
+              label="email"
               autoComplete="email"
               autoFocus
             />
@@ -111,14 +116,13 @@ export default function SignIn() {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="パスワード"
               type="password"
-              id="password"
               autoComplete="current-password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="ログイン状態を保存する"
             />
             <Button
               type="submit"
@@ -126,17 +130,17 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              ログイン
             </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  パスワードをお忘れですか？
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="../sign_up" variant="body2">
+                  {"新規登録"}
                 </Link>
               </Grid>
             </Grid>
