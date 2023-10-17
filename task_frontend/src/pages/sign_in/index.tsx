@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { parseCookies, setCookie, destroyCookie } from "nookies";
 import router from 'next/router';
+import apiClient from '../../apiClient'
 
 function Copyright(props: any) {
   return (
@@ -42,7 +43,7 @@ export default function SignIn() {
     parseCookies().uid,
     parseCookies()["access-token"]
   );
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const axiosInstance = axios.create({
@@ -56,7 +57,7 @@ export default function SignIn() {
       setIsError(false);
       setErrorMessage("");
       try {
-        const response = await axiosInstance.post("auth/sign_in", {
+        const response = await apiClient.post("auth/sign_in", {
           email: data.get("email"),
           password: data.get("password"),
         });

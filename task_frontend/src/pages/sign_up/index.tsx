@@ -15,6 +15,7 @@ import axios from 'axios';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import router from 'next/router';
 import { Alert } from '@mui/material';
+import apiClient from '../../apiClient'
 
 function Copyright(props: any) {
   return (
@@ -44,11 +45,11 @@ export default function SignUp() {
       },
       withCredentials: true,
     });
-    (async ()=> {
+    (async () => {
       setIsError(false);
       setErrorMessage("");
       try {
-        const response = await axiosInstance.post("auth", {
+        const response = await apiClient.post("auth", {
           name: data.get('name'),
           email: data.get('email'),
           password: data.get('password'),
