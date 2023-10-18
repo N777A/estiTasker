@@ -2,13 +2,13 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { ProjectType } from '@/src/types/Project';
 import apiClient from '@/src/apiClient';
+import CreateProjectForm from '@/src/components/CreateProjectForm';
 
 const Home: NextPage = () => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
-
+  const [showForm, setShowForm] = useState(false);
   const fetchProjects = async () => {
     try {
-apiClient
       const res = await apiClient.get<ProjectType[]>('http://localhost:3000/projects')
       setProjects(res.data)
     } catch(err) {
@@ -27,6 +27,8 @@ apiClient
           {project.title}
         </p>
       ))} */}
+      <button onClick={()=> setShowForm((prev)=> !prev)}>新しいProjectを作成</button>
+      {showForm && <CreateProjectForm />}
     </div>
   )
 }

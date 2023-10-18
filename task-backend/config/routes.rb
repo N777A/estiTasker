@@ -13,5 +13,5 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/projects', to: 'projects#index'
+  resources :projects
 end

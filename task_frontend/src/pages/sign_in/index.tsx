@@ -31,7 +31,6 @@ function Copyright(props: any) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -46,13 +45,7 @@ export default function SignIn() {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const axiosInstance = axios.create({
-      baseURL: `http://localhost:3000/api/v1/`,
-      headers: {
-        "content-type": "application/json",
-      },
-      withCredentials: true,
-    });
+
     (async () => {
       setIsError(false);
       setErrorMessage("");

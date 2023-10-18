@@ -11,6 +11,16 @@ const apiClient = axios.create({
     "X-Requested-With": "XMLHttpRequest",
   },
   withCredentials: true,
-})
+});
+
+apiClient.interceptors.request.use((config) => {
+  // ヘッダーに含まれるクッキー情報をログとして出力
+  console.log('Sending cookies🍪:', {
+    uid: config.headers['uid'],
+    client: config.headers['client'],
+    "access-token": config.headers['access-token'],
+  });
+  return config;
+});
 
 export default apiClient;

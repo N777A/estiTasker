@@ -41,7 +41,7 @@ export const handleLogout = async () => {
 
     destroyCookie(null, 'uid');
     destroyCookie(null, 'client');
-    destroyCookie(null, 'access_token');
+    destroyCookie(null, 'access-token');
 
     router.push("sign_in")
   } catch (err) {

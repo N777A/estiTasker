@@ -18,12 +18,19 @@ class ProjectsController < ApplicationController
   end
 
   def create 
-    @project = Project.new(project_params)
+    @user = current_api_v1_user
+    @project = @user.projects.new(project_params)
+
+    if @project.save
+      render json: @project, stauts: :created, location: @project
+    else
+      render json: @project.errors, status: :unprocessable_entity
+    end
   end
 
   private
 
   def project_params
-    params.require(:project).permit(:title, :description, :icon, :status,)
+    params.require(:project).permit(:title, :description, :icon, :status)
   end
 end
