@@ -14,7 +14,6 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  // ヘッダーに含まれるクッキー情報をログとして出力
   console.log('Sending cookies🍪:', {
     uid: config.headers['uid'],
     client: config.headers['client'],

@@ -1,50 +1,35 @@
-import router, { NextRouter } from 'next/router';
+import router from 'next/router';
 import { parseCookies, destroyCookie } from 'nookies';
-import axios from 'axios';
+import apiClient from './apiClient'
+
+const AUTH_COOKIE_KEYS = ['accesss-token', 'uid', 'client'];
+const IGNORE_ROUTES = ['/sign_in', '/sign_up'];
+const SIGN_IN_ROUTE = '/sign_in';
+const SIGN_OUT_ENDPOINT = 'auth/sign_out';
 
 export const isAuthenticated = (): boolean => {
-  const { 'access-token': accessToken, uid, client } = parseCookies();
+  const cookies = parseCookies();
+  return AUTH_COOKIE_KEYS.every(key => !!cookies[key]);
+};
 
-  return !!accessToken && !!uid && !!client;
-}
-
-export const requireAuthentication = (pathname: string) => {
+export const requireAuthentication = (pathname:string) => {
   const middleware = () => {
-    const ignoreRoutes = ['/sign_in', '/sign_up'];
-    
-    if (!isAuthenticated() && !ignoreRoutes.includes(pathname)) {
-      router.replace('/sign_in')
+    if (!isAuthenticated() && !IGNORE_ROUTES.includes(pathname)) {
+      router.replace(SIGN_IN_ROUTE)
     }
   };
 
-  return  middleware;
-};
+  return middleware;
+}
 
 export const handleLogout = async () => {
-  console.log(
-    parseCookies()["access-token"],
-    parseCookies().uid,
-    parseCookies().client,
-  )
-  const axiosInstance = axios.create({
-    baseURL: `http://localhost:3000/api/v1`,
-    headers: {
-      "access-token": parseCookies()["access-token"],
-      client: parseCookies().client,
-      uid: parseCookies().uid,
-    },
-    withCredentials: true,
-  });
-
   try {
-    await axiosInstance.delete('auth/sign_out');
+    await apiClient.delete(SIGN_OUT_ENDPOINT)
 
-    destroyCookie(null, 'uid');
-    destroyCookie(null, 'client');
-    destroyCookie(null, 'access-token');
+    AUTH_COOKIE_KEYS.forEach(key => destroyCookie(null, key));
 
-    router.push("sign_in")
+    router.push(SIGN_IN_ROUTE);
   } catch (err) {
-    console.log(err)
+    console.error(err);
   }
 }
