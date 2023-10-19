@@ -1,8 +1,9 @@
 import router from 'next/router';
 import { parseCookies, destroyCookie } from 'nookies';
 import apiClient from './apiClient'
+import axios, { Axios } from 'axios';
 
-const AUTH_COOKIE_KEYS = ['accesss-token', 'uid', 'client'];
+const AUTH_COOKIE_KEYS = ['access-token', 'uid', 'client'];
 const IGNORE_ROUTES = ['/sign_in', '/sign_up'];
 const SIGN_IN_ROUTE = '/sign_in';
 const SIGN_OUT_ENDPOINT = 'auth/sign_out';
@@ -24,7 +25,7 @@ export const requireAuthentication = (pathname:string) => {
 
 export const handleLogout = async () => {
   try {
-    await apiClient.delete(SIGN_OUT_ENDPOINT)
+    await apiClient.delete('auth/sign_out')
 
     AUTH_COOKIE_KEYS.forEach(key => destroyCookie(null, key));
 

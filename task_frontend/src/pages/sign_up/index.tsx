@@ -11,8 +11,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
-import { parseCookies, setCookie, destroyCookie } from 'nookies';
+import { setCookie, destroyCookie } from 'nookies';
 import router from 'next/router';
 import { Alert } from '@mui/material';
 import apiClient from '../../apiClient'
@@ -38,13 +37,7 @@ export default function SignUp() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const axiosInstance = axios.create({
-      baseURL: `http://localhost:3000/api/v1`,
-      headers: {
-        'content-type': 'application/json',
-      },
-      withCredentials: true,
-    });
+
     (async () => {
       setIsError(false);
       setErrorMessage("");
