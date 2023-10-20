@@ -19,6 +19,14 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def show
+    @user = current_api_v1_user
+    @project = @user.projects.find(params[:id])
+    Rails.logger.info(@project.inspect)
+
+    render json: @project
+  end
+
   private
 
   def project_params

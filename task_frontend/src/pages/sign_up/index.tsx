@@ -57,7 +57,7 @@ export default function SignUp() {
         setCookie(null, 'access-token', response.headers["access-token"], {
           path: "/",
         });
-        router.push('../home');
+        router.push('../projects');
       } catch (err) {
         destroyCookie(null, 'uid');
         destroyCookie(null, 'client');

@@ -66,7 +66,7 @@ export default function SignIn() {
         });
         console.log(response);
 
-        router.push("/home");
+        router.push("/projects");
       } catch (err) {
         destroyCookie(null, "uid");
         destroyCookie(null, "client");
