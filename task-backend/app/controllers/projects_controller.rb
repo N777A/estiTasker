@@ -22,7 +22,7 @@ class ProjectsController < ApplicationController
   def show
     @user = current_api_v1_user
     @project = @user.projects.find(params[:id])
-    Rails.logger.info(@project.inspect)
+    Rails.logger.info(@pr)
 
     render json: @project
   end

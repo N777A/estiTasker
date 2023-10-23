@@ -13,6 +13,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :projects
-  resources :sections
+  resources :projects do
+    resources :sections, only: [:index, :create]
+  end
+
+  resources :sections, only: [:update] do
+    resources :tasks
+  end
 end
