@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_18_010139) do
+ActiveRecord::Schema.define(version: 2023_10_23_080453) do
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
     t.string "title"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(version: 2023_10_18_010139) do
     t.integer "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "project_id", null: false
+    t.index ["project_id"], name: "index_sections_on_project_id"
   end
 
   create_table "tasks", charset: "utf8mb3", force: :cascade do |t|
@@ -67,4 +69,5 @@ ActiveRecord::Schema.define(version: 2023_10_18_010139) do
   end
 
   add_foreign_key "projects", "users"
+  add_foreign_key "sections", "projects"
 end

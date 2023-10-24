@@ -1,11 +1,15 @@
 class SectionsController < ApplicationController
   def index
-    @sections = Project.sections.all
+    @user = current_api_v1_user
+    @project = @user.projects.find(params[:project_id])
+    @sections = @project.sections.all
+
+    render json: @sections
   end
 
   def create
     @user = current_api_v1_user
-    @project = @user.projects.find(params[:id])
+    @project = @user.projects.find(params[:project_id])
     @section = @project.sections.new(section_params)
 
     if @section.save
@@ -19,6 +23,6 @@ class SectionsController < ApplicationController
   private
 
   def section_params
-    params.require(:sections).premit(:title)
+    params.require(:sections).permit(:title)
   end
 end

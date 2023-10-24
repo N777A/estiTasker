@@ -1,9 +1,12 @@
 import { useState } from "react";
 import apiClient from "../apiClient";
-import { CreateSectionFormProps } from '../types/Section'
+import { useRouter } from "next/router";
 
-const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ projectId }) => {
+const CreateSectionForm: React.FC = () => {
+  const router = useRouter();
+  const { projectId } = router.query;
   const [title, setTitle] = useState('')
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

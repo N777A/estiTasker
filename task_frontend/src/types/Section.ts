@@ -11,6 +11,3 @@ export type ApiResponseSectionType = {
   sections: SectionType[];
 }
 
-export type CreateSectionFormProps = {
-  projectId: string;
-}
