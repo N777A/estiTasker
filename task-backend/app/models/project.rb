@@ -1,4 +1,4 @@
 class Project < ApplicationRecord
   belongs_to :user
-  has_many :sections
+  has_many :sections, dependent: :destroy
 end

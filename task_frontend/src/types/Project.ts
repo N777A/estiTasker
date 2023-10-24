@@ -12,5 +12,3 @@ export type ApiResponseProjectType = {
   user: User;
   projects: ProjectType[];
 }
-
-

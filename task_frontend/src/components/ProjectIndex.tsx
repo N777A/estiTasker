@@ -2,9 +2,12 @@ import Link from "next/link"
 import { useEffect, useState } from "react";
 import { ProjectType, ApiResponseProjectType } from '../types/Project';
 import apiClient from "../apiClient";
+import EditProjectFormButton from "./EditProjectFormButton";
+import DeleteProjectButton from "./DeleteProjectButton";
 
 const ProjectIndex: React.FC = () => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const fetchProjects = async () => {
     try {
@@ -28,6 +31,14 @@ const ProjectIndex: React.FC = () => {
             <Link href={`/projects/${project.id}`}>
               {project.title}
             </Link>
+            <button onClick={() => setShowDropdown(prev => !prev)}>...</button>
+            {showDropdown && (
+              <div>
+                <EditProjectFormButton />
+                <DeleteProjectButton />
+              </div>
+
+            )}
           </li>
         ))}
       </ul>

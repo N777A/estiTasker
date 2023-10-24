@@ -3,10 +3,9 @@ import { NextPage } from "next"
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ProjectType } from "@/src/types/Project";
-import CreateSectionForm from "@/src/components/CreateSectionForm";
-import { ApiResponseSectionType } from '../../types/Section'
 import SectionIndex from "@/src/components/SectionIndex";
-
+import EditProjectFormButton from "@/src/components/EditProjectFormButton";
+import DeleteProjectButton from "@/src/components/DeleteProjectButton";
 
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();
@@ -14,6 +13,7 @@ const ProjectTaskPage: NextPage = () => {
   console.log(`router.query⭐️${router.query.projectId}`);
 
   const [project, setProject] = useState<ProjectType | null>(null);
+  const [showDropdown, setShowDorpdown] = useState(false);
   
   const fetchProject = async () => {
     if (projectId) {
@@ -35,7 +35,13 @@ const ProjectTaskPage: NextPage = () => {
     <div className='project-page-container'>
       <div className='project-info-container'>
         <h2>{project?.title}</h2>
-        <button>▽</button>
+        <button onClick={() => setShowDorpdown(prev => !prev)}>▽</button>
+        {showDropdown && (
+          <div className='dropdown-menu'>
+            <EditProjectFormButton />
+            <DeleteProjectButton />
+          </div>
+        )}
       </div>
       <SectionIndex />
     </div>
