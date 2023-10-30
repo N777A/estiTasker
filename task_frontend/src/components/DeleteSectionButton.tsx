@@ -1,8 +1,22 @@
+import apiClient from "../apiClient";
+import { DeleteSectionButtonProps } from "../types/Section";
 
-const DeleteSectionButton = () => {
-  
+const DeleteSectionButton:React.FC<DeleteSectionButtonProps> = ({ sectionId, onDelete }) => {
+  const handleDelete = async () => {
+    if (!confirm('セクションを削除した場合、所属するタスクも削除されますがよろしいですか？')) {
+      return;
+    }
+
+    try {
+      await apiClient.delete(`http://localhost:3000/sections/${sectionId}`)
+      onDelete(sectionId)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return(
-    <button>セクションを削除</button>
+    <button onClick={handleDelete}>セクションを削除</button>
   )
 }
 

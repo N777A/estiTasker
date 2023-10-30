@@ -1,12 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-
-type SectionTitleEditorProps = {
-  sectionId: number;
-  initialTitle: string;
-  onSave: (sectionId: number, newTitle: string) => Promise<void>
-  onFinishEditing: () => void;
-  onTitleChange: (sectionId: number, newTitle: string) => void;
-};
+import { useEffect, useRef, useState } from "react";
+import { SectionTitleEditorProps } from "../types/Section";
 
 const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitle, onSave, onFinishEditing, onTitleChange }) => {
   const [editingTitle, setEditingTitle] = useState(initialTitle);

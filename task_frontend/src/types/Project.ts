@@ -1,5 +1,5 @@
 import { User } from './User'
-
+import React,  { Dispatch, SetStateAction } from 'react';
 
 export type ProjectType = {
   title: string;
@@ -16,4 +16,5 @@ export type ApiResponseProjectType = {
 
 export type CreateProjectFormProps = {
   onAdd: (newProject: ProjectType) => void;
+  toggleFormVisibility: Dispatch<SetStateAction<boolean>>;
 }

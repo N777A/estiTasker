@@ -4,9 +4,9 @@ import apiClient from "../apiClient";
 import { useRouter } from "next/router";
 import CreateSectionForm from "./CreateSectionForm";
 import EditSection from './EditSection'
+import DeleteSectionButton from "./DeleteSectionButton";
 
-
-const SectionIndex = () => {
+const SectionIndex:React.FC = () => {
   const router = useRouter();
   const { projectId } = router.query;
 
@@ -72,6 +72,13 @@ const SectionIndex = () => {
     };
   }, [dropdownSectionId]);
 
+  const onDelete = (sectionId: number) => {
+    setSections((prev) => {
+      const newSections = prev?.filter((section) => section.id !== sectionId);
+      return newSections && newSections?.length > 0 ? newSections : null;
+    });
+  }
+
   return (
     <div className='task-list-container'>
         <button onClick={() => setShowSectionForm(prev => !prev)}>セクションを追加</button>
@@ -99,7 +106,7 @@ const SectionIndex = () => {
                     }}>
                       セクション名を変更
                     </button>
-                    <button>セクションを削除</button>
+                    <DeleteSectionButton sectionId={section.id} onDelete={onDelete} />
                   </div>
                 )}
               </li>

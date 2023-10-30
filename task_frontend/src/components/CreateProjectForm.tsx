@@ -7,7 +7,7 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onAdd, toggleForm
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState('');
   const [status, setStatus] = useState('');
-  const divRef = useRef();
+  const divRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

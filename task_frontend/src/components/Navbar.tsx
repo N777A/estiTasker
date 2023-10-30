@@ -1,7 +1,6 @@
 import React from 'react';
-import router from 'next/router';
 import { handleLogout } from '../auth'
-import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { parseCookies } from "nookies";
 
 const Navbar: React.FC = () => {
 

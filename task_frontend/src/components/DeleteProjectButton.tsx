@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import apiClient from "../apiClient";
 
-const DeleteProjectButton = () => {
+const DeleteProjectButton:React.FC = () => {
   const router = useRouter();
   const { projectId } = router.query
 
