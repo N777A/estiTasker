@@ -20,9 +20,25 @@ class SectionsController < ApplicationController
     end
   end
 
+  def update
+    @section = Section.find(params[:id])
+
+    if @section.update(section_params)
+      render json: @section
+    else
+      render json: @section.error, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @section = Section.find(params[:id])
+
+    @section.destroy
+  end
+
   private
 
   def section_params
-    params.require(:sections).permit(:title)
+    params.require(:section).permit(:title)
   end
 end

@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import apiClient from "../apiClient";
+import { CreateProjectFormProps } from "../types/Project";
 
-const CreateProjectForm = () => {
+const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onAdd, toggleFormVisibility }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState('');
   const [status, setStatus] = useState('');
+  const divRef = useRef();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiClient.post('http://localhost:3000/projects', {
+      const response = await apiClient.post('http://localhost:3000/projects', {
         project: {
           title,
           description,
@@ -19,19 +21,32 @@ const CreateProjectForm = () => {
         }
       });
       
+      onAdd(response.data)
       setTitle('')
       setDescription('')
       setIcon('')
       setStatus('')
-
-      window.location.reload();
+      
     } catch (error) {
       console.error(error);
     }
   }
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (divRef.current && !divRef.current.contains(e.target as Node)) {
+        toggleFormVisibility(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [toggleFormVisibility])
+
   return (
-    <div>
+    <div ref={divRef}>
       <form
         onSubmit={handleSubmit}
       >
@@ -49,6 +64,7 @@ const CreateProjectForm = () => {
         />
         <button
           type='submit'
+          onClick={() => toggleFormVisibility(false)}
         >
           Projectを作成
         </button>

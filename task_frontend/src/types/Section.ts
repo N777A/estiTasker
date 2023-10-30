@@ -11,3 +11,6 @@ export type ApiResponseSectionType = {
   sections: SectionType[];
 }
 
+export type CreateSectionFormProps = {
+  onAdd: (newSection: SectionType) => void;
+}

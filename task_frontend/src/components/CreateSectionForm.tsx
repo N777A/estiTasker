@@ -1,25 +1,24 @@
 import { useState } from "react";
 import apiClient from "../apiClient";
 import { useRouter } from "next/router";
+import { CreateSectionFormProps } from "../types/Section";
 
-const CreateSectionForm: React.FC = () => {
+const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ onAdd }) => {
   const router = useRouter();
   const { projectId } = router.query;
   const [title, setTitle] = useState('')
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiClient.post(`http://localhost:3000/projects/${projectId}/sections`, {
-        sections: {
-          title
+      const response = await apiClient.post(`http://localhost:3000/projects/${projectId}/sections`, {
+        'section': {
+          'title': title
         }
       });
 
+      onAdd(response.data)
       setTitle('')
-
-      window.location.reload();
     } catch(error) {
       console.log(error);
     }

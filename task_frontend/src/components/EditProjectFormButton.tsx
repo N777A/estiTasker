@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import apiClient from "../apiClient";
 import { useRouter } from "next/router";
 
-const EditProjectFormButton: React.FC = () => {
+const EditProjectForm: React.FC = () => {
   const router = useRouter();
   const { projectId } = router.query;
 
@@ -16,7 +16,7 @@ const EditProjectFormButton: React.FC = () => {
     const fetchProject = async () => {
       try {
         const res = await apiClient.get(`http://localhost:3000/projects/${projectId}`)
-
+        console.log(showEditProjectForm)
         const { title, description } = res.data;
         setTitle(title);
         setDescription(description)
@@ -32,10 +32,9 @@ const EditProjectFormButton: React.FC = () => {
     }, [projectId]) 
 
     const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
       try {
         await  apiClient.put(`http://localhost:3000/projects/${projectId}`, { project: { title, description }});
-
+        
       } catch(error) {
         console.log(error)
       }
@@ -50,7 +49,7 @@ const EditProjectFormButton: React.FC = () => {
       >
         <button 
           type='submit'
-          onClick={() => setShowEditProjectForm(false)}
+          // onClick={() => setShowEditProjectForm(false)}
         >
         ×
         </button>
@@ -73,4 +72,4 @@ const EditProjectFormButton: React.FC = () => {
   )
 }
 
-export default EditProjectFormButton;
+export default EditProjectForm;
