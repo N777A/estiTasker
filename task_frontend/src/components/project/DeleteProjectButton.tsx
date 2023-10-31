@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import apiClient from "../apiClient";
+import apiClient from "../../apiClient";
 
 const DeleteProjectButton:React.FC = () => {
   const router = useRouter();

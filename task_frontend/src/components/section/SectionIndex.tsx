@@ -1,6 +1,6 @@
 import { SectionType } from "@/src/types/Section";
 import { useCallback, useEffect, useState } from "react";
-import apiClient from "../apiClient";
+import apiClient from "../../apiClient";
 import { useRouter } from "next/router";
 import CreateSectionForm from "./CreateSectionForm";
 import EditSection from './EditSection'

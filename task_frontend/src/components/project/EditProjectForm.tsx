@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import apiClient from "../apiClient";
+import apiClient from "../../apiClient";
 import { useRouter } from "next/router";
 
 const EditProjectForm: React.FC = () => {

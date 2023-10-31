@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import apiClient from "../apiClient";
+import apiClient from "../../apiClient";
 import { useRouter } from "next/router";
-import { CreateSectionFormProps } from "../types/Section";
+import { CreateSectionFormProps } from "../../types/Section";
 
 const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ onAdd, toggleFormVisibility }) => {
   const router = useRouter();

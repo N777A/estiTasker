@@ -1,5 +1,5 @@
 import React from 'react';
-import { handleLogout } from '../auth'
+import { handleLogout } from '../../auth'
 import { parseCookies } from "nookies";
 
 const Navbar: React.FC = () => {

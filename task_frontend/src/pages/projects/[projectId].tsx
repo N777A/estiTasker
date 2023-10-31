@@ -3,9 +3,9 @@ import { NextPage } from "next"
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ProjectType } from "@/src/types/Project";
-import SectionIndex from "@/src/components/SectionIndex";
-import EditProjectForm from "@/src/components/EditProjectForm";
-import DeleteProjectButton from "@/src/components/DeleteProjectButton";
+import SectionIndex from "@/src/components/section/SectionIndex";
+import EditProjectForm from "@/src/components/project/EditProjectForm";
+import DeleteProjectButton from "@/src/components/project/DeleteProjectButton";
 
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();

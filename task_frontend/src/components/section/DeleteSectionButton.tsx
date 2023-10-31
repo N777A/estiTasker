@@ -1,5 +1,5 @@
-import apiClient from "../apiClient";
-import { DeleteSectionButtonProps } from "../types/Section";
+import apiClient from "../../apiClient";
+import { DeleteSectionButtonProps } from "../../types/Section";
 
 const DeleteSectionButton:React.FC<DeleteSectionButtonProps> = ({ sectionId, onDelete }) => {
   const handleDelete = async () => {

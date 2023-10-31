@@ -1,15 +1,15 @@
 class ProjectsController < ApplicationController
   before_action :authenticate_api_v1_user!
+  before_action :set_user
+  before_action :set_project, only: [:show, :update, :destroy]
 
   def index
-    @user = current_api_v1_user
     @projects = @user.projects.all
     
     render json: { user: @user, projects: @projects}
   end
 
   def create 
-    @user = current_api_v1_user
     @project = @user.projects.new(project_params)
 
     if @project.save
@@ -20,17 +20,10 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @user = current_api_v1_user
-    @project = @user.projects.find(params[:id])
-    Rails.logger.info(@pr)
-
     render json: @project
   end
 
   def update
-    @user  = current_api_v1_user
-    @project = @user.projects.find(params[:id])
-
     if @project.update(project_params)
       render json: @project
     else
@@ -39,12 +32,19 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @user = current_api_v1_user
-    @project  = @user.projects.find(params[:id])
     @project.destroy
+    head :no_content
   end
 
   private
+
+  def set_user
+    @user = current_api_v1_user
+  end
+
+  def set_project
+    @project = @user.projects.find(params[:id])
+  end
 
   def project_params
     params.require(:project).permit(:title, :description, :icon, :status)

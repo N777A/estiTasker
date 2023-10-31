@@ -1,6 +1,6 @@
 import { ChangeEvent, EventHandler, useEffect, useRef, useState } from "react";
-import apiClient from "../apiClient";
-import { CreateProjectFormProps, ProjectType } from "../types/Project";
+import apiClient from "../../apiClient";
+import { CreateProjectFormProps, ProjectType } from "../../types/Project";
 
 const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onAdd, toggleFormVisibility }) => {
   const [formData, setFormData] = useState<ProjectType>({ title: '', description: '', icon: '' });

@@ -3,7 +3,7 @@ import { AppProps } from "next/app";
 import PropTypes from "prop-types";
 import { requireAuthentication } from "../auth";
 import { useRouter } from "next/router";
-import Navbar from '../components/Navbar'
+import Navbar from '../components/common/Navbar'
 
 function MyApp(props: AppProps) {
   const router = useRouter();

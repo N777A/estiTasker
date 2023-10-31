@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { useEffect, useState } from "react";
-import { ProjectType, ApiResponseProjectType } from '../types/Project';
-import apiClient from "../apiClient";
-import CreateProjectForm from '@/src/components/CreateProjectForm';
+import { ProjectType, ApiResponseProjectType } from '../../types/Project';
+import apiClient from "../../apiClient";
+import CreateProjectForm from '@/src/components/project/CreateProjectForm';
 
 const ProjectIndex: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
