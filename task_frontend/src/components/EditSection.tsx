@@ -38,12 +38,7 @@ const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitl
         setEditingTitle(e.target.value);
         onTitleChange(sectionId, e.target.value)
       }}
-      onKeyDown={(e) => {
-        console.log('onKeydown', e.key)
-        if (e.key === 'Enter') {
-          handleFinishEditing()
-        }
-      }}
+      onKeyDown={(e) => e.key === 'Enter' && handleFinishEditing()}
   />
   )
 }

@@ -14,6 +14,7 @@ export type ApiResponseSectionType = {
 
 export type CreateSectionFormProps = {
   onAdd: (newSection: SectionType) => void;
+  toggleFormVisibility: Dispatch<SetStateAction<boolean>>;
 }
 
 export type DeleteSectionButtonProps  = {

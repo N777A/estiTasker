@@ -82,7 +82,12 @@ const SectionIndex:React.FC = () => {
   return (
     <div className='task-list-container'>
         <button onClick={() => setShowSectionForm(prev => !prev)}>セクションを追加</button>
-        {showSectionForm && <CreateSectionForm onAdd={addNewSection}/>}
+        {showSectionForm &&
+          <CreateSectionForm
+            onAdd={addNewSection} 
+            toggleFormVisibility={setShowSectionForm}
+          />
+        }
         <ul>
           {sections && sections.map((section) => (
               <li key={section.id}>
@@ -106,7 +111,10 @@ const SectionIndex:React.FC = () => {
                     }}>
                       セクション名を変更
                     </button>
-                    <DeleteSectionButton sectionId={section.id} onDelete={onDelete} />
+                    <DeleteSectionButton
+                      sectionId={section.id}
+                      onDelete={onDelete}
+                    />
                   </div>
                 )}
               </li>

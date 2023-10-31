@@ -1,12 +1,11 @@
 import { User } from './User'
-import React,  { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 export type ProjectType = {
   title: string;
-  description: Text;
+  description: string;
   icon: string;
-  status: number;
-  id: string;
+  id?: number;
 }
 
 export type ApiResponseProjectType = {

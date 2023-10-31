@@ -1,20 +1,21 @@
 import apiClient from "@/src/apiClient";
 import { NextPage } from "next"
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ProjectType } from "@/src/types/Project";
 import SectionIndex from "@/src/components/SectionIndex";
-import EditProjectFormButton from "@/src/components/EditProjectFormButton";
+import EditProjectForm from "@/src/components/EditProjectForm";
 import DeleteProjectButton from "@/src/components/DeleteProjectButton";
 
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();
   const { projectId } = router.query;
-  console.log(`router.query⭐️${router.query.projectId}`);
+  const divRef = useRef();
 
   const [project, setProject] = useState<ProjectType | null>(null);
-  const [showDropdown, setShowDorpdown] = useState(false);
-  
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [toggleEditForm, setToggleEditForm] = useState(false);
+
   const fetchProject = async () => {
     if (projectId) {
       try {
@@ -31,14 +32,32 @@ const ProjectTaskPage: NextPage = () => {
     console.log('fetch Project!')
   }, [projectId])
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (divRef.current && !divRef.current.contains(e.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [divRef, showDropdown])
   return(
     <div className='project-page-container'>
       <div className='project-info-container'>
         <h2>{project?.title}</h2>
-        <button onClick={() => setShowDorpdown(prev => !prev)}>▽</button>
+        <button onClick={() => {
+          setShowDropdown(prev => !prev)        }}
+        >
+          ▽
+        </button>
         {showDropdown && (
-          <div className='dropdown-menu'>
-            <EditProjectFormButton />
+          <div className='dropdown-menu' ref={divRef} >
+            <button onClick={() => {
+              setToggleEditForm(prev => !prev)
+            }}>
+              Projectを編集する
+            </button>
+            {toggleEditForm && <EditProjectForm />}
             <DeleteProjectButton />
           </div>
         )}
