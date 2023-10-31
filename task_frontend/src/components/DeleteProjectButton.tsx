@@ -15,10 +15,9 @@ const DeleteProjectButton:React.FC = () => {
 
       router.push('/projects')
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
-
 
   return (
     <button onClick={handleDelete}>Projectを削除</button>

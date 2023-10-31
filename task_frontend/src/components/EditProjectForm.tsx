@@ -18,7 +18,7 @@ const EditProjectForm: React.FC = () => {
       const { title, description } = res.data;
       setProjectData({ ...projectData, title, description })
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -37,7 +37,7 @@ const EditProjectForm: React.FC = () => {
     try {
       await  apiClient.put(`http://localhost:3000/projects/${projectId}`, { project: projectData});
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

@@ -1,5 +1,5 @@
 import { SectionType } from "@/src/types/Section";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import apiClient from "../apiClient";
 import { useRouter } from "next/router";
 import CreateSectionForm from "./CreateSectionForm";
@@ -15,19 +15,18 @@ const SectionIndex:React.FC = () => {
   const [dropdownSectionId, setDropdownSectionId] = useState<number | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<number | null>(null);
     
-  const fetchSection = async () => {
+  const fetchSection = useCallback(async () => {
     try {
       const res = await apiClient.get<SectionType[]>(`http://localhost:3000/projects/${projectId}/sections`);
       setSections(res.data)
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
-  }
+  }, [projectId])
 
   useEffect(() => {
     if(!router.isReady) return;
       fetchSection();
-      console.log('fetch sections')
   }, [router.isReady])
 
   const addNewSection = (newSection: SectionType) => {
@@ -36,7 +35,6 @@ const SectionIndex:React.FC = () => {
 
   const onSave = async (sectionId: number, newTitle: string) => {
     try {
-      console.log('バックエンドに編集後のsectionを送信')
       await apiClient.put(`http://localhost:3000/sections/${sectionId}`, {
         'section': {
           'title': newTitle

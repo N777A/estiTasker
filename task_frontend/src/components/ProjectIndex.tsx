@@ -13,7 +13,7 @@ const ProjectIndex: React.FC = () => {
       const res = await apiClient.get<ApiResponseProjectType>('http://localhost:3000/projects')
       setProjects(res.data.projects)
     } catch(err) {
-      console.log(err)
+      console.error(err)
     }
   }
 

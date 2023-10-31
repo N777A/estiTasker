@@ -11,7 +11,7 @@ const DeleteSectionButton:React.FC<DeleteSectionButtonProps> = ({ sectionId, onD
       await apiClient.delete(`http://localhost:3000/sections/${sectionId}`)
       onDelete(sectionId)
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

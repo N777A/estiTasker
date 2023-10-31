@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SectionTitleEditorProps } from "../types/Section";
 
 const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitle, onSave, onFinishEditing, onTitleChange }) => {
@@ -6,14 +6,19 @@ const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitl
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log('initialTitle changed', initialTitle)
     setEditingTitle(initialTitle);
   }, [initialTitle])
 
-  const handleFinishEditing = async () => {
+  const handleFinishEditing = useCallback(async () => {
     await onSave(sectionId, editingTitle);
     onFinishEditing();
-  }
+  }, [sectionId, editingTitle, onSave, onFinishEditing]);
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setEditingTitle(newTitle);
+    onTitleChange(sectionId, newTitle);
+  }, [sectionId, onTitleChange]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -33,11 +38,7 @@ const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitl
       ref={inputRef}
       autoFocus
       value={editingTitle}
-      onChange={(e) => {
-        console.log('onChange')
-        setEditingTitle(e.target.value);
-        onTitleChange(sectionId, e.target.value)
-      }}
+      onChange={handleChange}
       onKeyDown={(e) => e.key === 'Enter' && handleFinishEditing()}
   />
   )

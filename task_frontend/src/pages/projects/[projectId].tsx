@@ -10,7 +10,7 @@ import DeleteProjectButton from "@/src/components/DeleteProjectButton";
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();
   const { projectId } = router.query;
-  const divRef = useRef();
+  const divRef = useRef<HTMLDivElement>(null);
 
   const [project, setProject] = useState<ProjectType | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -22,20 +22,20 @@ const ProjectTaskPage: NextPage = () => {
         const res = await apiClient.get<ProjectType>(`http://localhost:3000/projects/${projectId}`);
         setProject(res.data);
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
   }
 
   useEffect(() => {
     fetchProject();
-    console.log('fetch Project!')
   }, [projectId])
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (divRef.current && !divRef.current.contains(e.target as Node)) {
         setShowDropdown(false)
+        setToggleEditForm(false)
       }
     }
       document.addEventListener('mousedown', handleClickOutside)
@@ -45,16 +45,10 @@ const ProjectTaskPage: NextPage = () => {
     <div className='project-page-container'>
       <div className='project-info-container'>
         <h2>{project?.title}</h2>
-        <button onClick={() => {
-          setShowDropdown(prev => !prev)        }}
-        >
-          ▽
-        </button>
+        <button onClick={() => setShowDropdown(prev => !prev)}>▽</button>
         {showDropdown && (
           <div className='dropdown-menu' ref={divRef} >
-            <button onClick={() => {
-              setToggleEditForm(prev => !prev)
-            }}>
+            <button onClick={() => setToggleEditForm(prev => !prev)}>
               Projectを編集する
             </button>
             {toggleEditForm && <EditProjectForm />}
