@@ -1,62 +1,75 @@
-import { ChangeEvent, EventHandler, useEffect, useRef, useState } from "react";
-import apiClient from "../../apiClient";
-import { CreateProjectFormProps, ProjectType } from "../../types/Project";
+import { useState } from "react";
+import { ProjectType } from "../../types/Project";
+import useProjects from "@/src/hooks/useProjects";
+import { Box, Button, Modal, TextField } from "@mui/material";
 
-const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onAdd, toggleFormVisibility }) => {
-  const [formData, setFormData] = useState<ProjectType>({ title: '', description: '', icon: '' });
-  const divRef = useRef<HTMLDivElement>(null);
+const INIT_PROJECT = { title: "", description: "", icon: "" };
+export type CreateProjectFormProps = {}
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await apiClient.post('http://localhost:3000/projects', { project: formData })
-      
-      onAdd(res.data)
-      setFormData({ title: '', description: '', icon: '' });
-      toggleFormVisibility(false)
-    } catch (error) {
-      console.error(error);
-    }
+const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
+  const [showForm, setShowForm] = useState(false);
+  const [project, setProject] = useState<ProjectType>(INIT_PROJECT);
+  const { addProject } = useProjects();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setProject({ ...project, [name]: value });
   }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value });
-  };
+  const resetForm = () => {
+    setProject(INIT_PROJECT)
+    setShowForm(false)
+  }
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (divRef.current && !divRef.current.contains(e.target as Node)) {
-        toggleFormVisibility(false)
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [toggleFormVisibility])
+  const onSubmit = () => {
+    addProject(project)
+    resetForm()
+  }
 
   return (
-    <div ref={divRef}>
-      <form onSubmit={handleSubmit}>
-        <label>New Project</label>
-        <input 
-          type="text"
-          name="title"
-          placeholder="タイトル"
-          value={formData.title}
-          onChange={handleChange}
-        />
-        <textarea
-          name="description"
-          placeholder="説明"
-          value={formData.description}
-          onChange={handleChange}
-        />
-        <button type='submit'>
-          Projectを作成
-        </button>
-      </form>
-    </div>
+    <>
+      <Button variant="outlined" size="small" onClick={() => setShowForm((prev) => !prev)}>新しいProjectを作成</Button>
+      <Modal open={showForm} onClose={resetForm}>
+        <Box sx={style}>
+          <h2 className="mb-2">新規プロジェクト作成</h2>
+          <TextField
+            name="title"
+            label="タイトル"
+            placeholder="タイトル"
+            value={project.title}
+            className="mb-2"
+            fullWidth
+            onChange={handleChange}
+          />
+          <TextField
+            name="description"
+            label="説明"
+            placeholder="説明"
+            value={project.description}
+            className="mb-2"
+            fullWidth
+            multiline
+            onChange={handleChange}
+          />
+          <div>
+            <Button variant="outlined" size="small" onClick={onSubmit}>
+              Projectを作成
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+    </>
   )
 }
 

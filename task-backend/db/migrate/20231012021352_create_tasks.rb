@@ -5,7 +5,6 @@ class CreateTasks < ActiveRecord::Migration[6.1]
       t.text :description
       t.integer :status
       t.date :due_date
-      t.integer :section_id
       t.integer :position
 
       t.timestamps

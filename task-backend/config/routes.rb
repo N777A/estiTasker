@@ -10,14 +10,14 @@ Rails.application.routes.draw do
       namespace :auth do
         resources :sessions, only: %i[index]
       end
+
+      resources :projects do
+        resources :sections, only: [:index, :create]
+      end
+    
+      resources :sections, only: [:update, :destroy] do
+        resources :tasks
+      end
     end
-  end
-
-  resources :projects do
-    resources :sections, only: [:index, :create]
-  end
-
-  resources :sections, only: [:update, :destroy] do
-    resources :tasks
   end
 end

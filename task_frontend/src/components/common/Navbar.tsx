@@ -11,14 +11,17 @@ const Navbar: React.FC = () => {
       parseCookies()["access-token"]
     );
   }
+  
   return (
-    <nav>
-      <button onClick={handleLogout}>
+    <nav className="flex border-b-2 p-2">
+      <div className="text-xs">プロジェクト管理ツール</div>
+      <div className="grow"></div>
+      <button className="text-xs" onClick={handleLogout}>
         ログアウト
       </button>
-      <button onClick={handleCashe}>
+      {/* <button onClick={handleCashe}>
         キャッシュ確認
-      </button>
+      </button> */}
     </nav>
   )
 }

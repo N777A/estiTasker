@@ -1,46 +1,43 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SectionTitleEditorProps } from "../../types/Section";
+import apiClient from "@/src/apiClient";
 
-const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitle, onSave, onFinishEditing, onTitleChange }) => {
+const EditSection: React.FC<SectionTitleEditorProps> = ({ sectionId, initialTitle, onSave, onTitleChange }) => {
   const [editingTitle, setEditingTitle] = useState(initialTitle);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  const submitEditSection = async (e: any) => {
+    e.preventDefault();
+    try {
+      await apiClient.put(`http://localhost:3000/sections/${sectionId}`, {
+        'section': {
+          'title': editingTitle
+        }
+      });
+      onTitleChange(sectionId, editingTitle)
+      onSave(sectionId, editingTitle);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-    setEditingTitle(initialTitle);
-  }, [initialTitle])
-
-  const handleFinishEditing = useCallback(async () => {
-    await onSave(sectionId, editingTitle);
-    onFinishEditing();
-  }, [sectionId, editingTitle, onSave, onFinishEditing]);
-
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    setEditingTitle(newTitle);
-    onTitleChange(sectionId, newTitle);
-  }, [sectionId, onTitleChange]);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (e: any) => {
       if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
-        handleFinishEditing();
+        onSave(sectionId, "");
       }
     }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [editingTitle, handleFinishEditing])
-
+  }, [])
   return (
-    <input
-      ref={inputRef}
-      autoFocus
-      value={editingTitle}
-      onChange={handleChange}
-      onKeyDown={(e) => e.key === 'Enter' && handleFinishEditing()}
-  />
+    <form onSubmit={submitEditSection}>
+      <input
+        ref={inputRef}
+        autoFocus
+        value={editingTitle}
+        onChange={(e) => setEditingTitle(e.target.value)}
+      />
+    </form>
+   
   )
 }
 

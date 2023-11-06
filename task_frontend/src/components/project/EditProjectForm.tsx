@@ -1,68 +1,77 @@
-import React, { useEffect, useState } from "react";
-import apiClient from "../../apiClient";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
+import useProjects from "@/src/hooks/useProjects";
+import { ProjectType } from "@/src/types/Project";
+import { Box, Button, Modal, TextField } from "@mui/material";
 
-const EditProjectForm: React.FC = () => {
-  const router = useRouter();
-  const { projectId } = router.query;
+const INIT_PROJECT = { title: "", description: "", icon: "" };
+export type EditProjectFormProps = {
+  project: ProjectType | undefined
+}
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
-  const [projectData, setProjectData] = useState({
-    title: '',
-    description: '',
-    icon: '',
-  })
-
-  const fetchProject = async () => {
-    try {
-      const res = await apiClient.get(`http://localhost:3000/projects/${projectId}`)
-      const { title, description } = res.data;
-      setProjectData({ ...projectData, title, description })
-    } catch(error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
-    if (projectId) {
-      fetchProject();
-    }
-  }, [projectId]) 
+const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
+  const { updateProject } = useProjects();
+  const [_project, setProject] = useState<ProjectType>(project || INIT_PROJECT)
+  const [showForm, setShowForm] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setProjectData({ ...projectData, [name]: value });
+    setProject({ ..._project, [name]: value });
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    try {
-      await  apiClient.put(`http://localhost:3000/projects/${projectId}`, { project: projectData});
-    } catch(error) {
-      console.error(error)
-    }
+  const resetForm = () => {
+    setProject(project || INIT_PROJECT)
+    setShowForm(false)
+  }
+
+  const onSubmit = () => {
+    updateProject(_project)
+    resetForm();
   }
 
   return(
-    <div>
-      <form onSubmit={handleSubmit}>
-        <button type='submit'>
-        ×
-        </button>
-        <label>Project編集</label>
-        <input
-          type='text'
-          name='title'
-          value={projectData.title}
-          onChange={handleChange}
-          placeholder="タイトル"
-        />
-        <textarea
-          name='description'
-          value={projectData.description}
-          onChange={handleChange}
-          placeholder='説明'
-        />
-      </form>
-    </div>
+    <>
+      <button onClick={() => setShowForm((prev) => !prev)}>プロジェクトを変更する</button>
+      <Modal open={showForm} onClose={resetForm}>
+        <Box sx={style}>
+          <h2 className="mb-2">プロジェクトを変更</h2>
+          <TextField
+            name="title"
+            label="タイトル"
+            placeholder="タイトル"
+            value={_project.title}
+            className="mb-2"
+            fullWidth
+            onChange={handleChange}
+          />
+          <TextField
+            name="description"
+            label="説明"
+            placeholder="説明"
+            value={_project.description}
+            className="mb-2"
+            fullWidth
+            multiline
+            onChange={handleChange}
+          />
+          <div>
+            <Button variant="outlined" size="small" onClick={onSubmit}>
+              Projectを更新
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+    </>
   )
 }
 

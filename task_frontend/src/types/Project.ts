@@ -1,5 +1,4 @@
 import { User } from './User'
-import { Dispatch, SetStateAction } from 'react';
 
 export type ProjectType = {
   title: string;
@@ -8,12 +7,9 @@ export type ProjectType = {
   id?: number;
 }
 
-export type ApiResponseProjectType = {
+export type ListProjectResponseType = {
   user: User;
   projects: ProjectType[];
 }
 
-export type CreateProjectFormProps = {
-  onAdd: (newProject: ProjectType) => void;
-  toggleFormVisibility: Dispatch<SetStateAction<boolean>>;
-}
+export type CreateProjectResponseType = ProjectType;

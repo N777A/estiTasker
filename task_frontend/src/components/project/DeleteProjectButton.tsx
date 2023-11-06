@@ -1,21 +1,23 @@
+import useProjects from "@/src/hooks/useProjects";
+import { ProjectType } from "@/src/types/Project";
 import { useRouter } from "next/router";
-import apiClient from "../../apiClient";
 
-const DeleteProjectButton:React.FC = () => {
+export type DeleteProjectFormProps = {
+  project: ProjectType | undefined
+}
+
+const DeleteProjectButton:React.FC<DeleteProjectFormProps> = ({ project }) => {
   const router = useRouter();
-  const { projectId } = router.query
+  const { deleteProject } = useProjects()
 
   const handleDelete = async () => {
     if (!confirm('本当にProjectを削除しますか？Projectが削除されるとタスクも全て削除されます。')){
       return;
     }
 
-    try {
-      await apiClient.delete(`http://localhost:3000/projects/${projectId}`)
-
+    if (project?.id) {
+      deleteProject(project?.id)
       router.push('/projects')
-    } catch(error) {
-      console.error(error)
     }
   }
 

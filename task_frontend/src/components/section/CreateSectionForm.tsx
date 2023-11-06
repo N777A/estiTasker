@@ -9,11 +9,12 @@ const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ onAdd, toggleForm
   const [title, setTitle] = useState('');
   const divRef = useRef<HTMLDivElement>(null);
 
-  const submitSection = async () => {
+  const submitSection = async (e: any) => {
     if (!projectId) {
       console.error('Project ID is not defined')
       return;
     }
+    e.preventDefault();
     try {
       const {data} = await apiClient.post(`http://localhost:3000/projects/${projectId}/sections`, {
         'section': {
@@ -33,7 +34,7 @@ const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ onAdd, toggleForm
   useEffect(() => {
     const handleClickOutSide = (e:MouseEvent) => {
       if (divRef.current && !divRef.current.contains(e.target as Node)) {
-        submitSection();
+        toggleFormVisibility(false)
       }
     }
 
@@ -43,14 +44,14 @@ const CreateSectionForm: React.FC<CreateSectionFormProps> = ({ onAdd, toggleForm
 
   return (
     <div ref={divRef}>
-      <h1>セクションフォーム</h1>
-        <input 
+      <form onSubmit={submitSection}>
+      <input
           type='text'
           placeholder="新規のセクション"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && submitSection()}
-        />
+        />  
+      </form>
     </div>
   )
 }
