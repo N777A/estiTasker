@@ -1,6 +1,10 @@
+import { UniqueIdentifier } from '@dnd-kit/core';
 import { TaskType } from './Task';
 import { User } from './User'
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
+import { toInteger } from 'lodash';
+
+export type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
 
 export type SectionResponseType = {
   id: number;
@@ -13,17 +17,18 @@ export type SectionType = {
   id: number;
   title: string;
   position: number;
-  tasks: Map<number, TaskType>;
+  tasks: Map<UniqueIdentifier, TaskType>;
 }
 
 export const formatSection = (section: SectionResponseType): SectionType => {
   return {
     ...section,
-    tasks: new Map<number, TaskType>(section.tasks?.map(task => [task.id, { ...task }]))
+    tasks: new Map<UniqueIdentifier, TaskType>(section.tasks?.map(task => [task.id, { ...task }]))
   }
 }
 
-export const cloneSections = (sections: Map<number, SectionType>): Map<number, SectionType> => {
+// Mapがjsonへ変換した際に上手く変換できないため、MapをArrayに変換して再び戻している
+export const cloneSections = (sections: Map<UniqueIdentifier, SectionType>): Map<UniqueIdentifier, SectionType> => {
   return JSON.parse(JSON.stringify(sections, replacer), reviver)
 }
 
@@ -50,7 +55,7 @@ export const BLANK_SECTION: SectionType = {
   id: 0,
   title: "無題のセクション",
   position: 0,
-  tasks: new Map<number, TaskType>()
+  tasks: new Map<UniqueIdentifier, TaskType>()
 }
 
 export type ApiResponseSectionType = {
@@ -81,4 +86,8 @@ export const is_section_empty = (section: SectionType): boolean => {
 
 export const is_sections_equal = (section1: SectionType, section2: SectionType): boolean => {
   return JSON.stringify(section1) === JSON.stringify(section2)
+}
+
+export const sections2items = (sections: Map<UniqueIdentifier, SectionType>): Items => {
+  return Object.fromEntries(Array.from(sections.values()).map(section => [section.id, Array.from(section.tasks.values()).map(task => task.id)]))
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProjectType } from "../../types/Project";
+import { ProjectType, projectValidate } from "../../types/Project";
 import useProjects from "@/src/hooks/useProjects";
 import { Box, Button, Modal, TextField } from "@mui/material";
 
@@ -21,10 +21,14 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
   const [showForm, setShowForm] = useState(false);
   const [project, setProject] = useState<ProjectType>(INIT_PROJECT);
   const { addProject } = useProjects();
+  const [error, setError] = useState({ title: '', description: ''});
+  const validate = projectValidate
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const newError = validate(name, value)
     setProject({ ...project, [name]: value });
+    setError({...error, [name]: newError})
   }
 
   const resetForm = () => {
@@ -35,6 +39,7 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
   const onSubmit = () => {
     addProject(project)
     resetForm()
+    
   }
 
   return (
@@ -51,6 +56,8 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
             className="mb-2"
             fullWidth
             onChange={handleChange}
+            error={!!error.title || !project.title}
+            helperText={error.title ? error.title : (!project.title ? '入力が必須です' : null)}
           />
           <TextField
             name="description"
@@ -61,9 +68,16 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
             fullWidth
             multiline
             onChange={handleChange}
+            error={!!error.description}
+            helperText={error.description}
           />
           <div>
-            <Button variant="outlined" size="small" onClick={onSubmit}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onSubmit}
+              disabled={!!error.title || !!error.description || !project.title}
+            >
               Projectを作成
             </Button>
           </div>

@@ -3,8 +3,8 @@ export type TaskType = {
   title: string;
   description: string;
   status: number;
-  dueDate: string;
-  sectionId: number;
+  due_date: string;
+  section_id: number;
   position: number;
 }
 
@@ -12,9 +12,9 @@ export const BLANK_TASK: TaskType = {
   id: -1, // 0 の時は初期化状態。データベース登録後、正しい ID になる。
   title: "",
   description: "",
-  status: 0,
-  dueDate: "",
-  sectionId: 0,
+  status: 1,
+  due_date: "",
+  section_id: 0,
   position: 0
 }
 

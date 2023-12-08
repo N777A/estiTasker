@@ -16,8 +16,13 @@ Rails.application.routes.draw do
       end
     
       resources :sections, only: [:update, :destroy] do
-        resources :tasks
+        member do
+          patch 'update_position'
+        end
+        resources :tasks, only: [:index, :create]
       end
+
+      resources :tasks, only: [:update, :destroy]
     end
   end
 end

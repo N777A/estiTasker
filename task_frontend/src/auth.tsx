@@ -26,11 +26,9 @@ export const requireAuthentication = (pathname:string) => {
 export const handleLogout = async () => {
   try {
     await apiClient.delete(SIGN_OUT_ENDPOINT)
-
-    AUTH_COOKIE_KEYS.forEach(key => destroyCookie(null, key));
-
-    router.push(SIGN_IN_ROUTE);
   } catch (err) {
     console.error(err);
   }
+  AUTH_COOKIE_KEYS.forEach(key => destroyCookie(null, key));
+  router.push(SIGN_IN_ROUTE);
 }

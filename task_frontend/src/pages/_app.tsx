@@ -9,7 +9,10 @@ import PropTypes from "prop-types";
 import { requireAuthentication } from "../auth";
 import { useRouter } from "next/router";
 import Navbar from '../components/common/Navbar'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ja'
 
+dayjs.locale('ja')
 
 function MyApp(props: AppProps) {
   const router = useRouter();

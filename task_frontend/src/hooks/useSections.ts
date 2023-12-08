@@ -3,25 +3,28 @@ import { ListProjectResponseType, CreateProjectResponseType, ProjectType } from 
 import apiClient from '../apiClient';
 import { BLANK_SECTION, SectionResponseType, SectionType, cloneSections, formatSection, is_sections_equal } from '../types/Section';
 import { TaskType, is_tasks_equal } from '../types/Task';
+import { UniqueIdentifier } from '@dnd-kit/core';
 
 const useSections = create<{
-  sections: Map<number, SectionType>,
+  sections: Map<UniqueIdentifier, SectionType>,
   fetchSections: (projectId: number) => void,
   addSection: (section: SectionType, projectId: number) => void,
   updateSection: (section: SectionType, projectId: number) => void,
-  deleteSection: (sectionId: number) => void,
-  addTask: (sectionId: number, task: TaskType) => void,
-  updateTask: (sectionId: number, task: TaskType) => void,
-  deleteTask: (sectionId: number, task: TaskType) => void,
+  deleteSection: (sectionId: UniqueIdentifier) => void,
+  addTask: (sectionId: UniqueIdentifier, task: TaskType) => void,
+  updateTask: (sectionId: UniqueIdentifier, task: TaskType) => void,
+  deleteTask: (sectionId: UniqueIdentifier, task: TaskType) => void,
+  reorderSection: (sectionId: UniqueIdentifier, previousSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => void;
 }>((set, get) => {
   const INIT_STATE = {
-    sections: new Map<number, SectionType>(),
+    sections: new Map<UniqueIdentifier, SectionType>(),
   }
 
   const fetchSections = async (projectId: number) => {
     try {
+      console.log("fetchSections")
       const res = await apiClient.get<SectionResponseType[]>(`/projects/${projectId}/sections`);
-      const _sectionsMap = new Map<number, SectionType>();
+      const _sectionsMap = new Map<UniqueIdentifier, SectionType>();
       res.data.forEach(_section => {
         _sectionsMap.set(_section.id, formatSection(_section));
       });
@@ -38,7 +41,7 @@ const useSections = create<{
         const _section = res.data
         state.sections.set(_section.id, formatSection(_section));
         return {
-          sections: new Map<number, SectionType>(state.sections),
+          sections: cloneSections(state.sections),
         }
       })
     } catch (error) {
@@ -57,8 +60,9 @@ const useSections = create<{
       set((state) => {
         const _section = res.data
         state.sections.set(_section.id, formatSection(_section));
+        console.log(section.id, Array.from(state.sections.values()).map(section => section.position))
         return {
-          sections: new Map<number, SectionType>(state.sections)
+          sections: cloneSections(state.sections)
         }
       })
     } catch (error) {
@@ -66,13 +70,13 @@ const useSections = create<{
     }
   }
 
-  const deleteSection = async (sectionId: number) => {
+  const deleteSection = async (sectionId: UniqueIdentifier) => {
     try {
       await apiClient.delete(`/sections/${sectionId}`)
       set((state) => {
         state.sections.delete(sectionId);
         return {
-          sections: new Map<number, SectionType>(state.sections)
+          sections: new Map<UniqueIdentifier, SectionType>(state.sections)
         }
       })
     } catch (error) {
@@ -80,7 +84,7 @@ const useSections = create<{
     }
   }
 
-  const addTask = async (sectionId: number, task: TaskType) => {
+  const addTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
     try {
       console.log("add task")
       const res = await apiClient.post<TaskType>(`/sections/${sectionId}/tasks`, { task: task });
@@ -93,24 +97,39 @@ const useSections = create<{
           sections: cloneSections(state.sections)
         }
       })
+      console.log("addTask called with sectionId:", sectionId, "and task:", task)
     } catch (error) {
       console.error(error);
     }
   }
 
-  const updateTask = async (sectionId: number, task: TaskType) => {
+  const updateTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
     const _old_value: TaskType = get().sections.get(sectionId)?.tasks.get(task.id)!
     if (is_tasks_equal(_old_value, task)) {
       return;
     }
     try {
       console.log("update task")
-      const res = await apiClient.put<TaskType>(`/sections/${sectionId}/tasks/${task.id}`, { task: task });
+      const res = await apiClient.put<TaskType>(`/tasks/${task.id}`, { task: task });
       set((state) => {
         const _task = res.data
-        console.log(_task)
         state.sections.get(sectionId)?.tasks.set(_task.id, _task)
-        console.log(state.sections.get(sectionId)?.tasks.get(_task.id))
+        return {
+          sections: cloneSections(state.sections)
+        }
+      })
+      console.log("updateTask called with sectionId:", sectionId, "and task:", task)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const deleteTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
+    try {
+      console.log("delete task")
+      await apiClient.delete(`/tasks/${task.id}`)
+      set((state) => {
+        state.sections.get(sectionId)?.tasks.delete(task.id)
         return {
           sections: cloneSections(state.sections)
         }
@@ -120,14 +139,18 @@ const useSections = create<{
     }
   }
 
-  const deleteTask = async (sectionId: number, task: TaskType) => {
+  const reorderSection = async (sectionId: UniqueIdentifier, previouSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => {
     try {
-      console.log("delete task")
-      await apiClient.delete(`/sections/${sectionId}/tasks/${task.id}`)
+     const res = await apiClient.patch(`/sections/${sectionId}/update_position`, {
+      previous_section_id: previouSectionId,
+      next_section_id: nextSectionId
+      });
+
       set((state) => {
-        state.sections.get(sectionId)?.tasks.delete(task.id)
+        const _section = res.data
+        state.sections.set(_section.id, formatSection(_section));
         return {
-          sections: cloneSections(state.sections)
+          sections: cloneSections(state.sections),
         }
       })
     } catch (error) {
@@ -144,6 +167,7 @@ const useSections = create<{
     addTask,
     updateTask,
     deleteTask,
+    reorderSection,
   }
 })
 

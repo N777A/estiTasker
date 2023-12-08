@@ -1,20 +1,19 @@
-import apiClient from "../../apiClient";
+import useSections from "@/src/hooks/useSections";
 import { DeleteSectionButtonProps } from "../../types/Section";
+import { UniqueIdentifier } from "@dnd-kit/core";
+import React from "react";
 
-const DeleteSectionButton:React.FC<DeleteSectionButtonProps> = ({ sectionId, onDelete }) => {
+export type DeleteSectionProps = {
+  sectionId: UniqueIdentifier,
+}
+const DeleteSectionButton: React.FC<DeleteSectionProps> = ({ sectionId }) => {
+  const { deleteSection }  = useSections();
   const handleDelete = async () => {
     if (!confirm('セクションを削除した場合、所属するタスクも削除されますがよろしいですか？')) {
       return;
     }
-
-    try {
-      await apiClient.delete(`http://localhost:3000/sections/${sectionId}`)
-      onDelete(sectionId)
-    } catch (error) {
-      console.error(error);
-    }
+    deleteSection(sectionId)
   }
-
   return(
     <button onClick={handleDelete}>セクションを削除</button>
   )

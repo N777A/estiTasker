@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useProjects from "@/src/hooks/useProjects";
-import { ProjectType } from "@/src/types/Project";
+import { ProjectType, projectValidate } from "@/src/types/Project";
 import { Box, Button, Modal, TextField } from "@mui/material";
 
 const INIT_PROJECT = { title: "", description: "", icon: "" };
@@ -23,10 +23,14 @@ const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
   const { updateProject } = useProjects();
   const [_project, setProject] = useState<ProjectType>(project || INIT_PROJECT)
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState({ title: '', description: ''})
+  const validate = projectValidate
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const newError = validate(name, value)
     setProject({ ..._project, [name]: value });
+    setError({...error, [name]: newError})
   }
 
   const resetForm = () => {
@@ -53,6 +57,8 @@ const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
             className="mb-2"
             fullWidth
             onChange={handleChange}
+            error={!!error.title}
+            helperText={error.title}
           />
           <TextField
             name="description"
@@ -63,9 +69,16 @@ const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
             fullWidth
             multiline
             onChange={handleChange}
+            error={!!error.description}
+            helperText={error.description}
           />
           <div>
-            <Button variant="outlined" size="small" onClick={onSubmit}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onSubmit}
+              disabled={!!error.title || !!error.description}
+            >
               Projectを更新
             </Button>
           </div>
