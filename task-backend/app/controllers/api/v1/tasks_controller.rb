@@ -1,5 +1,6 @@
 class Api::V1::TasksController < ApplicationController
-
+  before_action :authenticate_api_v1_user!
+  
   def index
     @section = Section.find(params[:section_id])
     @tasks = @section.tasks
@@ -51,10 +52,6 @@ class Api::V1::TasksController < ApplicationController
   def set_section
     @section = Section.find(params[:section_id])
   end
-
-  # def set_task
-  #   @task = Task.find(params[:id])
-  # end
 
   def task_params
     params.require(:task).permit(:title)

@@ -1,9 +1,10 @@
 class Api::V1::SectionsController < ApplicationController
+    before_action :authenticate_api_v1_user!
+    
   def index
     @user = current_api_v1_user
     @project = @user.projects.find(params[:project_id])
     @sections = @project.sections.all.includes(:tasks).order(:position)
-    p @sections
     render json: @sections.as_json(include: :tasks)
   end
 
