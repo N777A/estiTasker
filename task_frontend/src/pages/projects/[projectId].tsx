@@ -7,11 +7,14 @@ import DeleteProjectButton from "@/src/components/project/DeleteProjectButton";
 import IconMenu from "@/src/components/common/IconMenu";
 import { MenuItem } from "@mui/material";
 import useProjects from "@/src/hooks/useProjects";
+import { useLlm } from "@/src/hooks/useLlm";
 
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();
   const projectId: number = parseInt(router.query.projectId as string)
   const { project, fetchProject } = useProjects();
+
+  const { createTasks } = useLlm;
 
   useEffect(() => {
     if (projectId) fetchProject(projectId);
@@ -27,6 +30,13 @@ const ProjectTaskPage: NextPage = () => {
           </MenuItem>
           <MenuItem>
             <DeleteProjectButton project={project}/>
+          </MenuItem>
+          <MenuItem>
+            <button onClick={() => {
+              createTasks("Develop cute cats app").then(res => console.log(res))
+            }}>
+              Create Tasks
+            </button>
           </MenuItem>
         </IconMenu>
       </div>

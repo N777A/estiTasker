@@ -4,7 +4,7 @@ class Api::V1::SectionsController < ApplicationController
   def index
     @user = current_api_v1_user
     @project = @user.projects.find(params[:project_id])
-    @sections = @project.sections.all.includes(:tasks).order(:position)
+    @sections = @project.sections.includes(:tasks).order(:position)
     render json: @sections.as_json(include: :tasks)
   end
 

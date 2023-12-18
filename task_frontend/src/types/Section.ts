@@ -2,7 +2,6 @@ import { UniqueIdentifier } from '@dnd-kit/core';
 import { TaskType } from './Task';
 import { User } from './User'
 import { Dispatch, SetStateAction } from 'react';
-import { toInteger } from 'lodash';
 
 export type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
 

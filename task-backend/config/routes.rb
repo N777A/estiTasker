@@ -23,6 +23,13 @@ Rails.application.routes.draw do
       end
 
       resources :tasks, only: [:update, :destroy]
+
+      resources :llm, only: [], controller: 'llm' do
+        collection do
+          post :create_tasks
+          post :estimate_task_time
+        end
+      end
     end
   end
 end

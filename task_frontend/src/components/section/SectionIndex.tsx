@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSections from "@/src/hooks/useSections";
 import SectionContainer from "./SectionContainer";
 import TaskItem from "../task/TaskItem";
-import { Button, MenuItem } from "@mui/material";
+import { Button, IconButton, MenuItem, Tooltip } from "@mui/material";
 import { BLANK_TASK, TaskType } from "@/src/types/Task";
 import ButtonMenu from "../common/ButtonMenu";
 import {
@@ -25,6 +25,7 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { toInteger } from "lodash";
+import AutoTaskCreatorForm from "../Llm/AutoTaskCreatorForm";
 
 const SectionIndex: React.FC = () => {
   const router = useRouter();
@@ -171,7 +172,7 @@ const SectionIndex: React.FC = () => {
     if (projectId) {
       fetchSections(projectId);
     }
-  }, [router.isReady])
+  }, [router.isReady, projectId])
 
   useEffect(() => {
     console.log("clone")
@@ -183,10 +184,6 @@ const SectionIndex: React.FC = () => {
   useEffect(() => {
     console.log("cloned", _sections)
   }, [_sections])
-
-  // useEffect(() => {
-  //   console.log("cloned", containers)
-  // }, [containers])
 
   const addBlankTask = (sectionId?: UniqueIdentifier) => {
     console.log("add blank task")
@@ -238,6 +235,7 @@ const SectionIndex: React.FC = () => {
         {sections.size > 0 && <MenuItem onClick={() => addBlankTask()}>タスクを作成</MenuItem>}
         <MenuItem onClick={() => addBlankSection()}>セクションを作成</MenuItem>
       </ButtonMenu>
+      <AutoTaskCreatorForm />
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

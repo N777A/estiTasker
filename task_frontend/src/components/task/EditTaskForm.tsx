@@ -11,7 +11,6 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DeleteTaskButton from './DeleteTaskButton';
 
-
 const INIT_TASK = { title: "", description: "", icon: "", status: 1 };
 export type EditTaskFormProps = {
   sectionId: UniqueIdentifier,

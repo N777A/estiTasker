@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-import { ListProjectResponseType, CreateProjectResponseType, ProjectType } from '../types/Project';
 import apiClient from '../apiClient';
-import { BLANK_SECTION, SectionResponseType, SectionType, cloneSections, formatSection, is_sections_equal } from '../types/Section';
+import { SectionResponseType, SectionType, cloneSections, formatSection, is_sections_equal } from '../types/Section';
 import { TaskType, is_tasks_equal } from '../types/Task';
 import { UniqueIdentifier } from '@dnd-kit/core';
 
@@ -21,14 +20,24 @@ const useSections = create<{
   }
 
   const fetchSections = async (projectId: number) => {
+    const currentProjectId = projectId;
     try {
+      set(() => { return { sections: new Map<UniqueIdentifier, SectionType>() } });
+
+      const currentState = useSections.getState();
+      console.log("before State:", currentState);
       console.log("fetchSections")
       const res = await apiClient.get<SectionResponseType[]>(`/projects/${projectId}/sections`);
+      console.log(res)
+      console.log('-----------------------------')
+      
       const _sectionsMap = new Map<UniqueIdentifier, SectionType>();
       res.data.forEach(_section => {
         _sectionsMap.set(_section.id, formatSection(_section));
       });
       set(() => { return { sections: _sectionsMap } })
+      const afterState = useSections.getState();
+      console.log("after State:", afterState);
     } catch (err) {
       console.error(err)
     }

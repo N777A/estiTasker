@@ -4,7 +4,6 @@ import { SectionType, is_section_empty } from '@/src/types/Section';
 import { Button, MenuItem, TextField } from '@mui/material';
 import { debounce, forOwn } from 'lodash';
 import useSections from '@/src/hooks/useSections';
-import { useDroppable } from '@dnd-kit/core';
 import { AnimateLayoutChanges, defaultAnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -63,6 +62,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({ projectId, section,
     console.log(section)
   }, [section]);
 
+  // ここを消すと表示されなくなる
   useEffect(() => {
     onSectionChange(_section);
   }, [_section]);

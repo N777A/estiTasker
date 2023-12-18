@@ -76,12 +76,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
     setTask({ ..._task, [name]: value });
   }
 
-  // useEffect(() => {
-  //   if (is_new_task(task)) {
-  //     inputRef.current?.focus();
-  //   }
-  // }, [task]);
-
   useEffect(() => {
     setTask(task);
   }, [task]);
@@ -137,6 +131,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
       <Checkbox
         checked={_task.status === 2}
         onChange={handleStatusChange}
+        disabled={is_new_task(_task)}
       />
       <TextField 
         name="title"
@@ -159,19 +154,24 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
         }}
       >
       </TextField>
-      <Button 
-        onClick={toggleDrawer(true)}
-        data-dndkit-disabled-dnd-flag="true"
-      >
-        <MoreVertIcon fontSize='small'/>
-      </Button>
-      <Drawer 
-        anchor="right"
-        open={drawer.right}
-        onClose={toggleDrawer(false)}
-      >
-        {list()}
-      </Drawer>
+      {!is_task_empty(_task) && (
+        <>
+          <Button 
+            onClick={toggleDrawer(true)}
+            data-dndkit-disabled-dnd-flag="true"
+          >
+            <MoreVertIcon fontSize='small'/>
+          </Button>
+          <Drawer 
+            anchor="right"
+            open={drawer.right}
+            onClose={toggleDrawer(false)}
+          >
+            {list()}
+          </Drawer>
+        </>
+       
+      )}
     </div>
   );
 }

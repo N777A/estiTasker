@@ -28,6 +28,8 @@ services:
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: password
       MYSQL_HOST: mysql
+    env_file:
+      - .env
     depends_on:
       - mysql
     networks:
