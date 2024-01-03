@@ -31,7 +31,7 @@ const SectionIndex: React.FC = () => {
   const router = useRouter();
   const projectId = parseInt(router.query.projectId as string) || -1;
   // section のコピー
-  const { sections, fetchSections, addSection, reorderSection } = useSections();
+  const { currentProjectId, sections, fetchSections, addSection, reorderSection } = useSections();
   // Sortable のための位置情報
   const [items, setItems] = useState<Items>(sections2items(sections));
   const [containers, setContainers] = useState(Array.from(sections.keys()) as UniqueIdentifier[]);
@@ -55,65 +55,79 @@ const SectionIndex: React.FC = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (active.id in items && over?.id) {
+      setContainers((containers) => {
+        const activeIndex = containers.indexOf(active.id);
+        const overIndex = containers.indexOf(over.id);
+
+        return arrayMove(containers, activeIndex, overIndex);
+      });
+    }
+
+    const activeContainer = findContainer(active.id);
+
+    if (!activeContainer) {
+      // setActiveId(null);
+      return;
+    }
 
     const overId = over?.id;
 
-    if (overId == null || active.id in items) {
+    if (overId == null) {
+      // setActiveId(null);
       return;
     }
+
+    // if (overId === TRASH_ID) {
+    //   setItems((items) => ({
+    //     ...items,
+    //     [activeContainer]: items[activeContainer].filter(
+    //       (id) => id !== activeId
+    //     ),
+    //   }));
+    //   setActiveId(null);
+    //   return;
+    // }
+
+    // if (overId === PLACEHOLDER_ID) {
+    //   const newContainerId = getNextContainerId();
+
+    //   unstable_batchedUpdates(() => {
+    //     setContainers((containers) => [...containers, newContainerId]);
+    //     setItems((items) => ({
+    //       ...items,
+    //       [activeContainer]: items[activeContainer].filter(
+    //         (id) => id !== activeId
+    //       ),
+    //       [newContainerId]: [active.id],
+    //     }));
+    //     setActiveId(null);
+    //   });
+    //   return;
+    // }
 
     const overContainer = findContainer(overId);
-    const activeContainer = findContainer(active.id);
 
-    if (!overContainer || !activeContainer) {
-      return;
-    }
+    if (overContainer) {
+      const activeIndex = items[activeContainer].indexOf(active.id);
+      const overIndex = items[overContainer].indexOf(overId);
 
-    if (activeContainer !== overContainer) {
-      setItems((items) => {
-        const activeItems = items[activeContainer];
-        const overItems = items[overContainer];
-        const overIndex = overItems.indexOf(overId);
-        const activeIndex = activeItems.indexOf(active.id);
-
-        let newIndex: number;
-
-        if (overId in items) {
-          newIndex = overItems.length + 1;
-        } else {
-          const isBelowOverItem =
-            over &&
-            active.rect.current.translated &&
-            active.rect.current.translated.top >
-            over.rect.top + over.rect.height;
-
-          const modifier = isBelowOverItem ? 1 : 0;
-
-          newIndex =
-            overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-        }
-
-        return {
+      if (activeIndex !== overIndex) {
+        setItems((items) => ({
           ...items,
-          [activeContainer]: items[activeContainer].filter(
-            (item) => item !== active.id
+          [overContainer]: arrayMove(
+            items[overContainer],
+            activeIndex,
+            overIndex
           ),
-          [overContainer]: [
-            ...items[overContainer].slice(0, newIndex),
-            items[activeContainer][activeIndex],
-            ...items[overContainer].slice(
-              newIndex,
-              items[overContainer].length
-            ),
-          ],
-        };
-      });
+        }));
+      }
     }
+
+    // setActiveId(null);
   }
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
+  const handleDragOver = ({ active, over }: DragOverEvent) => {
 
     if (active.id in items && over?.id) {
       setContainers((containers) => {
@@ -169,13 +183,13 @@ const SectionIndex: React.FC = () => {
 
   useEffect(() => {
     if (!router.isReady) return;
-    if (projectId) {
+    if (projectId && currentProjectId != projectId) {
       fetchSections(projectId);
     }
   }, [router.isReady, projectId])
 
   useEffect(() => {
-    console.log("clone")
+    console.log("clone", sections)
     setSections(cloneSections(sections))
     setItems(sections2items(sections));
     setContainers(Array.from(sections.keys()) as UniqueIdentifier[]);
@@ -235,7 +249,7 @@ const SectionIndex: React.FC = () => {
         {sections.size > 0 && <MenuItem onClick={() => addBlankTask()}>タスクを作成</MenuItem>}
         <MenuItem onClick={() => addBlankSection()}>セクションを作成</MenuItem>
       </ButtonMenu>
-      <AutoTaskCreatorForm />
+      <AutoTaskCreatorForm projectId={projectId} />
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

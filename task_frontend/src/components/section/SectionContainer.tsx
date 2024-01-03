@@ -17,7 +17,7 @@ export type SectionContainerProps = {
 }
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
-  defaultAnimateLayoutChanges({...args, wasDragging: true});
+  defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
 const SectionContainer: React.FC<SectionContainerProps> = ({ projectId, section, children }) => {
   const [_section, setSection] = useState(section)
@@ -59,11 +59,11 @@ const SectionContainer: React.FC<SectionContainerProps> = ({ projectId, section,
 
   useEffect(() => {
     setSection(section);
-    console.log(section)
   }, [section]);
 
   // ここを消すと表示されなくなる
   useEffect(() => {
+    console.log('useEffect onSectionChange')
     onSectionChange(_section);
   }, [_section]);
 
@@ -94,6 +94,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({ projectId, section,
         style={{
           display: "flex",
           alignItems: "center",
+          height: '76px'
         }}
       >
         <Button {...listeners} {...attributes}
@@ -112,18 +113,18 @@ const SectionContainer: React.FC<SectionContainerProps> = ({ projectId, section,
             display: "flex",
             width: 360,
             "& .MuiOutlinedInput-root": {
-              "& fieldset": { 
+              "& fieldset": {
                 border: focused ? '1px solid #3f51b5' : 'none'
               }
             }
           }}
           inputProps={{
-            style: {fontSize: 20, fontWeight: 'bold'} 
-          }}          
+            style: { fontSize: 20, fontWeight: 'bold' }
+          }}
         />
         <IconMenu>
           <MenuItem>
-            <DeleteSectionButton sectionId={_section.id}/>
+            <DeleteSectionButton sectionId={_section.id} />
           </MenuItem>
         </IconMenu>
       </div>

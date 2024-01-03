@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Checkbox, TextField } from '@mui/material';
+import { Checkbox, IconButton, TextField } from '@mui/material';
 import { TaskType, is_new_task, is_task_empty } from '@/src/types/Task';
 import { debounce } from 'lodash';
 import useSections from '@/src/hooks/useSections';
@@ -13,6 +13,9 @@ import Drawer from "@mui/material/Drawer";
 import EditTaskForm from './EditTaskForm';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import AutoTaskCreator from '../Llm/AutoTaskCreator';
+import OwlCommentAboutTask from '../Llm/OwlCommentAboutTask';
 
 export type TaskItemProps = {
   sectionId: UniqueIdentifier,
@@ -40,7 +43,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
       return;
     }
 
-    setDrawer({right: open });
+    setDrawer({ right: open });
   };
 
   const list = () => (
@@ -49,7 +52,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
       role="presentation"
       data-dndkit-disabled-dnd-flag="true"
     >
-      <EditTaskForm sectionId={sectionId} task={task} handleDrawer={setDrawer}/>
+      <EditTaskForm sectionId={sectionId} task={task} handleDrawer={setDrawer} />
     </Box>
   );
 
@@ -59,14 +62,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
     listeners,
     setNodeRef,
     transform,
-  } = useSortable({id: task.id});
+  } = useSortable({ id: task.id });
 
   const style = {
-    margin: "10px",
+    // margin: "2px",
     opacity: 1,
     color: "#333",
     background: "white",
-    padding: "10px",
+    // padding: "4px",
     transform: CSS.Transform.toString(transform),
     display: "flex",
   };
@@ -108,11 +111,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
   );
 
   const handleStatusChange = () => {
-      const newStatus = _task.status === 2 ? 1 : 2;
-      const updatedTaskStatus = { ..._task, status: newStatus}
-      updateTask(sectionId, updatedTaskStatus)
-      setTask(updatedTaskStatus as TaskType)
-      console.log("handleStatusChange called with task:", _task)
+    const newStatus = _task.status === 2 ? 1 : 2;
+    const updatedTaskStatus = { ..._task, status: newStatus }
+    updateTask(sectionId, updatedTaskStatus)
+    setTask(updatedTaskStatus as TaskType)
+    console.log("handleStatusChange called with task:", _task)
   }
 
   const onBlur = () => {
@@ -127,13 +130,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Button {...listeners} {...attributes} size='small'><DragIndicatorIcon fontSize='small'/></Button>
+      <Button {...listeners} {...attributes} size='small'><DragIndicatorIcon fontSize='small' /></Button>
       <Checkbox
         checked={_task.status === 2}
         onChange={handleStatusChange}
         disabled={is_new_task(_task)}
       />
-      <TextField 
+      {/* <p>{_task.estimated_time}</p> */}
+      <TextField
         name="title"
         ref={inputRef}
         value={_task.title}
@@ -143,26 +147,26 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
         sx={{
           width: 360,
           "& .MuiOutlinedInput-root": {
-            "& fieldset": { 
+            "& fieldset": {
               border: 'none'
             },
             "&:hover fieldset": {
               border: '1px solid rgba(0, 0, 0, 0.23)' // ホバー時の枠線スタイル
             },
           }
-          
+
         }}
       >
       </TextField>
       {!is_task_empty(_task) && (
         <>
-          <Button 
+          <Button
             onClick={toggleDrawer(true)}
             data-dndkit-disabled-dnd-flag="true"
           >
-            <MoreVertIcon fontSize='small'/>
+            <MoreVertIcon fontSize='small' />
           </Button>
-          <Drawer 
+          <Drawer
             anchor="right"
             open={drawer.right}
             onClose={toggleDrawer(false)}
@@ -170,8 +174,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
             {list()}
           </Drawer>
         </>
-       
       )}
+      <AutoTaskCreator task={_task} sectionId={sectionId} />
+      <OwlCommentAboutTask />
     </div>
   );
 }
