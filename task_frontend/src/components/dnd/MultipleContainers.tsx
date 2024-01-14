@@ -1,5 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {createPortal, unstable_batchedUpdates} from 'react-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { BLANK_SECTION } from "@/src/types/Section";
+import { createPortal, unstable_batchedUpdates } from 'react-dom';
 import {
   CancelDrop,
   closestCenter,
@@ -32,17 +33,18 @@ import {
   SortingStrategy,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
-import {coordinateGetter as multipleContainersCoordinateGetter} from './multipleContainersKeyboardCoordinates';
+import { CSS } from '@dnd-kit/utilities';
+import { coordinateGetter as multipleContainersCoordinateGetter } from './multipleContainersKeyboardCoordinates';
 
-import {Item, Container, ContainerProps} from './components';
+import { Item, Container, ContainerProps } from './components';
+import useSections from '@/src/hooks/useSections';
 
 export default {
   title: 'Presets/Sortable/Multiple Containers',
 };
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
-  defaultAnimateLayoutChanges({...args, wasDragging: true});
+  defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
 function DroppableContainer({
   children,
@@ -77,7 +79,7 @@ function DroppableContainer({
   });
   const isOverContainer = over
     ? (id === over.id && active?.data.current?.type !== 'container') ||
-      items.includes(over.id)
+    items.includes(over.id)
     : false;
 
   return (
@@ -129,7 +131,7 @@ interface Props {
     isSorting: boolean;
     isDragOverlay: boolean;
   }): React.CSSProperties;
-  wrapperStyle?(args: {index: number}): React.CSSProperties;
+  wrapperStyle?(args: { index: number }): React.CSSProperties;
   itemCount?: number;
   items?: Items;
   handle?: boolean;
@@ -168,19 +170,12 @@ export function MultipleContainers({
   const [containers, setContainers] = useState(
     Object.keys(items) as UniqueIdentifier[]
   );
+  const { getSection, addSection, deleteSection, updateSection, getTask, updateTask, deleteTask } = useSections();
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = useRef(false);
   const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
-  /**
-   * Custom collision detection strategy optimized for multiple containers
-   *
-   * - First, find any droppable containers intersecting with the pointer.
-   * - If there are none, find intersecting containers with the active draggable.
-   * - If there are no intersecting containers, return the last matched intersection
-   *
-   */
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
       if (activeId && activeId in items) {
@@ -192,28 +187,23 @@ export function MultipleContainers({
         });
       }
 
-      // Start by finding any intersecting droppable
       const pointerIntersections = pointerWithin(args);
       const intersections =
         pointerIntersections.length > 0
-          ? // If there are droppables intersecting with the pointer, return those
-            pointerIntersections
+          ?
+          pointerIntersections
           : rectIntersection(args);
       let overId = getFirstCollision(intersections, 'id');
 
       if (overId != null) {
         if (overId === TRASH_ID) {
-          // If the intersecting droppable is the trash, return early
-          // Remove this if you're not using trashable functionality in your app
           return intersections;
         }
 
         if (overId in items) {
           const containerItems = items[overId];
 
-          // If a container is matched and it contains items (columns 'A', 'B', 'C')
           if (containerItems.length > 0) {
-            // Return the closest droppable within that container
             overId = closestCenter({
               ...args,
               droppableContainers: args.droppableContainers.filter(
@@ -227,19 +217,14 @@ export function MultipleContainers({
 
         lastOverId.current = overId;
 
-        return [{id: overId}];
+        return [{ id: overId }];
       }
 
-      // When a draggable item moves to a new container, the layout may shift
-      // and the `overId` may become `null`. We manually set the cached `lastOverId`
-      // to the id of the draggable item that was moved to the new container, otherwise
-      // the previous `overId` will be returned which can cause items to incorrectly shift positions
       if (recentlyMovedToNewContainer.current) {
         lastOverId.current = activeId;
       }
 
-      // If no droppable is matched, return the last match
-      return lastOverId.current ? [{id: lastOverId.current}] : [];
+      return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
     [activeId, items]
   );
@@ -273,8 +258,7 @@ export function MultipleContainers({
 
   const onDragCancel = () => {
     if (clonedItems) {
-      // Reset items to their original state in case items have been
-      // Dragged across containers
+
       setItems(clonedItems);
     }
 
@@ -288,6 +272,14 @@ export function MultipleContainers({
     });
   }, [items]);
 
+  useEffect(() => {
+    console.log("clone", initialItems)
+    setItems(initialItems || {});
+    setContainers(Object.keys(initialItems || {}).sort(
+      (sectionIdA, sectionIdB) => (getSection(sectionIdA)?.position || 0) - (getSection(sectionIdB)?.position || 0)
+    ) as UniqueIdentifier[])
+  }, [initialItems]);
+
   return (
     <DndContext
       sensors={sensors}
@@ -297,11 +289,11 @@ export function MultipleContainers({
           strategy: MeasuringStrategy.Always,
         },
       }}
-      onDragStart={({active}) => {
+      onDragStart={({ active }) => {
         setActiveId(active.id);
         setClonedItems(items);
       }}
-      onDragOver={({active, over}) => {
+      onDragOver={({ active, over }) => {
         const overId = over?.id;
 
         if (overId == null || overId === TRASH_ID || active.id in items) {
@@ -331,7 +323,7 @@ export function MultipleContainers({
                 over &&
                 active.rect.current.translated &&
                 active.rect.current.translated.top >
-                  over.rect.top + over.rect.height;
+                over.rect.top + over.rect.height;
 
               const modifier = isBelowOverItem ? 1 : 0;
 
@@ -358,8 +350,26 @@ export function MultipleContainers({
           });
         }
       }}
-      onDragEnd={({active, over}) => {
+      onDragEnd={({ active, over }) => {
         if (active.id in items && over?.id) {
+          // バックエンドの更新
+          const activeIndex = containers.indexOf(active.id);
+          const overIndex = containers.indexOf(over.id);
+          let section = getSection(active.id)
+          if (section) {
+            if (overIndex === 0) {
+              section.position = (getSection(containers.at(0) || 0)?.position || 0) - 1
+            } else if (overIndex === containers.length - 1) {
+              section.position = (getSection(containers.at(containers.length - 1) || 0)?.position || 0) + 1
+            } else {
+              let prevItem = getSection(containers.at(activeIndex > overIndex ? overIndex - 1 : overIndex) || 0)
+              let nextItem = getSection(containers.at(activeIndex > overIndex ? overIndex : overIndex + 1) || 0)
+              section.position = ((prevItem?.position || 0) + (nextItem?.position || 0)) / 2
+            }
+            updateSection(section)
+          }
+
+          // Section の並び替え
           setContainers((containers) => {
             const activeIndex = containers.indexOf(active.id);
             const overIndex = containers.indexOf(over.id);
@@ -416,7 +426,27 @@ export function MultipleContainers({
           const activeIndex = items[activeContainer].indexOf(active.id);
           const overIndex = items[overContainer].indexOf(overId);
 
+          // バックエンドの更新
+          let task = getTask(active.id)
+          const newContainer = typeof overContainer === 'string' ? parseInt(overContainer) : overContainer;
+          console.log(task, activeIndex, overIndex, activeContainer, overContainer, newContainer)
+          if (task && (activeIndex !== overIndex || task.section_id !== newContainer)) {
+            task.section_id = newContainer;
+            if (overIndex === 0) {
+              task.position = (getTask(items[overContainer].at(0) || 0)?.position || 0) - 1
+            } else if (overIndex === items[overContainer].length - 1) {
+              task.position = (getTask(items[overContainer].at(items[overContainer].length - 1) || 0)?.position || 0) + 1
+            } else {
+              let prevItem = getTask(items[overContainer].at(activeIndex > overIndex ? overIndex - 1 : overIndex) || 0)
+              let nextItem = getTask(items[overContainer].at(activeIndex > overIndex ? overIndex : overIndex + 1) || 0)
+              task.position = ((prevItem?.position || 0) + (nextItem?.position || 0)) / 2
+            }
+            updateTask(task)
+            console.log(task)
+          }
+
           if (activeIndex !== overIndex) {
+            // Task の並び替え
             setItems((items) => ({
               ...items,
               [overContainer]: arrayMove(
@@ -454,7 +484,7 @@ export function MultipleContainers({
             <DroppableContainer
               key={containerId}
               id={containerId}
-              label={minimal ? undefined : `Column ${containerId}`}
+              sectionId={containerId}
               columns={columns}
               items={items[containerId]}
               scrollable={scrollable}
@@ -476,6 +506,7 @@ export function MultipleContainers({
                       renderItem={renderItem}
                       containerId={containerId}
                       getIndex={getIndex}
+                      onRemove={() => handleRemoveTask(containerId, value)}
                     />
                   );
                 })}
@@ -526,7 +557,7 @@ export function MultipleContainers({
           isDragOverlay: true,
         })}
         color={getColor(id)}
-        wrapperStyle={wrapperStyle({index: 0})}
+        wrapperStyle={wrapperStyle({ index: 0 })}
         renderItem={renderItem}
         dragOverlay
       />
@@ -536,7 +567,7 @@ export function MultipleContainers({
   function renderContainerDragOverlay(containerId: UniqueIdentifier) {
     return (
       <Container
-        label={`Column ${containerId}`}
+        sectionId={containerId}
         columns={columns}
         style={{
           height: '100%',
@@ -559,7 +590,7 @@ export function MultipleContainers({
               isDragOverlay: false,
             })}
             color={getColor(item)}
-            wrapperStyle={wrapperStyle({index})}
+            wrapperStyle={wrapperStyle({ index })}
             renderItem={renderItem}
           />
         ))}
@@ -567,29 +598,56 @@ export function MultipleContainers({
     );
   }
 
-  function handleRemove(containerID: UniqueIdentifier) {
-    setContainers((containers) =>
-      containers.filter((id) => id !== containerID)
-    );
+  async function handleRemove(containerID: UniqueIdentifier) {
+    try {
+      deleteSection(containerID);
+      setContainers((containers) =>
+        containers.filter((id) => id !== containerID)
+      )
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function handleRemoveTask(containerID: UniqueIdentifier, itemID: UniqueIdentifier) {
+    try {
+      deleteTask(containerID, itemID);
+      setItems((items) => {
+        items[containerID] = items[containerID].filter((id) => id !== itemID)
+        return items
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   function handleAddColumn() {
-    const newContainerId = getNextContainerId();
+    // const newContainerId = getNextContainerId();
 
-    unstable_batchedUpdates(() => {
-      setContainers((containers) => [...containers, newContainerId]);
-      setItems((items) => ({
-        ...items,
-        [newContainerId]: [],
-      }));
-    });
+    // unstable_batchedUpdates(() => {
+    //   setContainers((containers) => [...containers, newContainerId]);
+    //   setItems((items) => ({
+    //     ...items,
+    //     [newContainerId]: [],
+    //   }));
+    // });
+
+    // Add Blank Section
+    const maxPosition: number = getSection(containers.at(containers.length - 1) || 0)?.position || 0;
+
+    const newPosition = maxPosition + 1
+    const newSection = {
+      ...JSON.parse(JSON.stringify(BLANK_SECTION)),
+      position: newPosition
+    }
+    addSection(newSection)
   }
 
   function getNextContainerId() {
     const containerIds = Object.keys(items);
-    const lastContainerId = containerIds[containerIds.length - 1];
+    // TODO: バックエンドから新しいセクションを作成
 
-    return String.fromCharCode(lastContainerId.charCodeAt(0) + 1);
+    return containerIds.length
   }
 }
 
@@ -608,8 +666,8 @@ function getColor(id: UniqueIdentifier) {
   return undefined;
 }
 
-function Trash({id}: {id: UniqueIdentifier}) {
-  const {setNodeRef, isOver} = useDroppable({
+function Trash({ id }: { id: UniqueIdentifier }) {
+  const { setNodeRef, isOver } = useDroppable({
     id,
   });
 
@@ -645,7 +703,8 @@ interface SortableItemProps {
   style(args: any): React.CSSProperties;
   getIndex(id: UniqueIdentifier): number;
   renderItem(): React.ReactElement;
-  wrapperStyle({index}: {index: number}): React.CSSProperties;
+  wrapperStyle({ index }: { index: number }): React.CSSProperties;
+  onRemove: () => void;
 }
 
 function SortableItem({
@@ -658,6 +717,7 @@ function SortableItem({
   containerId,
   getIndex,
   wrapperStyle,
+  onRemove,
 }: SortableItemProps) {
   const {
     setNodeRef,
@@ -682,9 +742,9 @@ function SortableItem({
       dragging={isDragging}
       sorting={isSorting}
       handle={handle}
-      handleProps={handle ? {ref: setActivatorNodeRef} : undefined}
+      handleProps={handle ? { ref: setActivatorNodeRef } : undefined}
       index={index}
-      wrapperStyle={wrapperStyle({index})}
+      wrapperStyle={wrapperStyle({ index })}
       style={style({
         index,
         value: id,
@@ -699,6 +759,7 @@ function SortableItem({
       fadeIn={mountedWhileDragging}
       listeners={listeners}
       renderItem={renderItem}
+      onRemove={onRemove}
     />
   );
 }

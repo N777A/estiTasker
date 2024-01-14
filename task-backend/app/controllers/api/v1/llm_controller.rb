@@ -5,15 +5,17 @@ class Api::V1::LlmController < ApplicationController
   def create_tasks
     @tasks = invoke(
       "Human: Break down to Tasks based on description. Estimate Time for each task for beginner developer.
-      Follow output-format and wrap result in <output></output> tag.
+      Convert estimated to minutes.
+      Follow output-format and wrap result in <output></output> tag. output in Japanese.
       <description>
       #{params[:input]}
       </description>
       <output-format>
       [
-        { \"title\": string, \"description\": string, \"estimated_time\": number (in hour) }
+        { \"title\": string, \"description\": string, \"estimated\": string (format: \"HH:mm\"), \"estimated_time\" : number }
       ]
       <output-format>
+      Breakdown task into small tasks. For example if it is frontend, break tasks to page, feature, and component level.
       Assistant:"
     )
     
@@ -29,7 +31,7 @@ class Api::V1::LlmController < ApplicationController
       </task>
       <output-format>
       { \"title\": string, \"time\": number (time to coplete in hour) }
-      </outputformat>
+      </output-format>
       Assistant:"
     )
     
@@ -49,7 +51,7 @@ class Api::V1::LlmController < ApplicationController
         temperature: 0.7,
         top_p: 1.0,
         top_k: 5,
-        max_tokens_to_sample: 256,
+        max_tokens_to_sample: 1024,
       }.to_json,
       content_type: "application/json",
       accept: "application/json",
@@ -57,9 +59,6 @@ class Api::V1::LlmController < ApplicationController
     })
     parsed_body = JSON.parse(resp.body.is_a?(StringIO) ? resp.body.read : resp.body)
     completion = parsed_body["completion"]
-    puts completion
-    puts '--------------------------'
-    puts parsed_body
     json_string = completion.match(/<output>(.*?)<\/output>/m)[1]
     JSON.parse(json_string)
   end

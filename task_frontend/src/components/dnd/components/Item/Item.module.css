@@ -47,7 +47,7 @@
   display: flex;
   flex-grow: 1;
   align-items: center;
-  padding: 18px 20px;
+  padding: 4px 4px;
   background-color: #fff;
   box-shadow:
     0 0 0 calc(1px / var(--scale-x, 1)) rgba(63, 63, 68, 0.05),
@@ -140,8 +140,8 @@
 .Actions {
   display: flex;
   align-self: flex-start;
-  margin-top: -12px;
+  /* margin-top: -12px;
   margin-left: auto;
   margin-bottom: -15px;
-  margin-right: -10px;
+  margin-right: -10px; */
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_03_102723) do
+ActiveRecord::Schema.define(version: 2024_01_13_082729) do
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
     t.string "title"
@@ -37,10 +37,11 @@ ActiveRecord::Schema.define(version: 2023_11_03_102723) do
     t.text "description"
     t.integer "status"
     t.date "due_date"
-    t.integer "position"
+    t.float "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "section_id", null: false
+    t.integer "estimated_time"
     t.index ["section_id"], name: "index_tasks_on_section_id"
   end
 

@@ -249,6 +249,7 @@ const SectionIndex: React.FC = () => {
         {sections.size > 0 && <MenuItem onClick={() => addBlankTask()}>タスクを作成</MenuItem>}
         <MenuItem onClick={() => addBlankSection()}>セクションを作成</MenuItem>
       </ButtonMenu>
+      
       <AutoTaskCreatorForm projectId={projectId} />
       <DndContext
         sensors={sensors}

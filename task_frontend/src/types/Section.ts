@@ -3,7 +3,9 @@ import { TaskType } from './Task';
 import { User } from './User'
 import { Dispatch, SetStateAction } from 'react';
 
-export type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
+export type SectionId = UniqueIdentifier;
+export type TaskId = UniqueIdentifier;
+export type Items = Record<SectionId, TaskId[]>;
 
 export type SectionResponseType = {
   id: number;
@@ -16,18 +18,26 @@ export type SectionType = {
   id: number;
   title: string;
   position: number;
-  tasks: Map<UniqueIdentifier, TaskType>;
+  tasks: Map<TaskId, TaskType>;
 }
 
 export const formatSection = (section: SectionResponseType): SectionType => {
   return {
     ...section,
-    tasks: new Map<UniqueIdentifier, TaskType>(section.tasks?.map(task => [task.id, { ...task }]))
+    tasks: new Map<TaskId, TaskType>(section.tasks?.map(task => [task.id, { ...task }]))
   }
 }
 
 // Mapがjsonへ変換した際に上手く変換できないため、MapをArrayに変換して再び戻している
-export const cloneSections = (sections: Map<UniqueIdentifier, SectionType>): Map<UniqueIdentifier, SectionType> => {
+export const cloneSections = (sections: Map<SectionId, SectionType>): Map<SectionId, SectionType> => {
+  return JSON.parse(JSON.stringify(sections, replacer), reviver)
+}
+
+export const cloneSection = (sections: SectionType): SectionType => {
+  return JSON.parse(JSON.stringify(sections, replacer), reviver)
+}
+
+export const cloneTasks = (sections: Map<TaskId, TaskType>): Map<TaskId, TaskType> => {
   return JSON.parse(JSON.stringify(sections, replacer), reviver)
 }
 
@@ -54,7 +64,7 @@ export const BLANK_SECTION: SectionType = {
   id: 0,
   title: "無題のセクション",
   position: 0,
-  tasks: new Map<UniqueIdentifier, TaskType>()
+  tasks: new Map<TaskId, TaskType>()
 }
 
 export type ApiResponseSectionType = {
@@ -87,6 +97,10 @@ export const is_sections_equal = (section1: SectionType, section2: SectionType):
   return JSON.stringify(section1) === JSON.stringify(section2)
 }
 
-export const sections2items = (sections: Map<UniqueIdentifier, SectionType>): Items => {
-  return Object.fromEntries(Array.from(sections.values()).map(section => [section.id, Array.from(section.tasks.values()).map(task => task.id)]))
+// Map<SectionId, SectionType> から { SectionId: TaskId[] } へ変換
+export const sections2items = (sections: Map<SectionId, SectionType>): Items => {
+  return Object.fromEntries(Array.from(sections.values()).map(section => [
+    section.id,
+    Array.from(section.tasks.values()).sort((taskA, taskB) => taskA.position - taskB.position).map(task => task.id)
+  ]))
 }

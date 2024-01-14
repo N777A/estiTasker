@@ -108,16 +108,20 @@ const CatCommentTop = () => {
     setCurrentMessage(messages[randomIndex]);
     setDisplayText('');
   };
+
   const bubbleStyle = {
     margin: '10px 0',
     padding: '20px',
     borderRadius: '10px',
     border: '2px solid rgba(97, 97, 97, 0.3)',
-    position: 'relative',
+    position: 'relative' as 'relative',
     maxWidth: '300px', // 最大幅を調整
     minWidth: '100px', // 最小幅を設定
   };
   const containerStyle = {
+    position: 'absolute' as 'absolute',
+    bottom: '15px',
+    right: '15px',
     display: 'flex', // Flexboxを使う
     alignItems: 'center', // 中央揃え
   };
@@ -127,6 +131,9 @@ const CatCommentTop = () => {
   }
   return(
     <div style={containerStyle}>
+      <div style={bubbleStyle}>
+        <p style={pStyle}>{displayText}</p>
+      </div>
       <button onClick={handleCatClick}>
         {catMove ? 
           <Image src='/catMove.gif' alt="cat" width={50} height={10}/>
@@ -134,9 +141,6 @@ const CatCommentTop = () => {
           <Image src='/cat.png' alt="cat" width={50} height={10}/>
         }
       </button>
-      <div style={bubbleStyle}>
-        <p style={pStyle}>{displayText}</p>
-      </div>
     </div>
 
   )

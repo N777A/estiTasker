@@ -91,32 +91,32 @@ const TaskItem: React.FC<TaskItemProps> = ({ sectionId, task, removeBlankTask })
   // useEffect(() => {
   //   console.log("_task updated to:", _task)
   // }, [_task])
-  const onTaskChange = useCallback(
-    debounce(
-      (
-        _task: TaskType
-      ) => {
-        if (!is_task_empty(_task)) {
-          if (is_new_task(_task)) {
-            addTask(sectionId, _task)
-          } else {
-            updateTask(sectionId, _task)
-            console.log('debounce')
-          }
-        }
-      },
-      1000
-    ),
-    []
-  );
+  // const onTaskChange = useCallback(
+  //   debounce(
+  //     (
+  //       _task: TaskType
+  //     ) => {
+  //       if (!is_task_empty(_task)) {
+  //         if (is_new_task(_task)) {
+  //           addTask(sectionId, _task)
+  //         } else {
+  //           updateTask(sectionId, _task)
+  //           console.log('debounce')
+  //         }
+  //       }
+  //     },
+  //     1000
+  //   ),
+  //   []
+  // );
 
-  const handleStatusChange = () => {
-    const newStatus = _task.status === 2 ? 1 : 2;
-    const updatedTaskStatus = { ..._task, status: newStatus }
-    updateTask(sectionId, updatedTaskStatus)
-    setTask(updatedTaskStatus as TaskType)
-    console.log("handleStatusChange called with task:", _task)
-  }
+  // const handleStatusChange = () => {
+  //   const newStatus = _task.status === 2 ? 1 : 2;
+  //   const updatedTaskStatus = { ..._task, status: newStatus }
+  //   updateTask(sectionId, updatedTaskStatus)
+  //   setTask(updatedTaskStatus as TaskType)
+  //   console.log("handleStatusChange called with task:", _task)
+  // }
 
   const onBlur = () => {
     if (is_task_empty(_task)) {

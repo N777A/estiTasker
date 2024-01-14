@@ -1,11 +1,19 @@
-import React, {useEffect} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
-import type {Transform} from '@dnd-kit/utilities';
-
-import {Handle, Remove} from './components';
-
+import type { DraggableSyntheticListeners, UniqueIdentifier } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
+import { Action, Handle, Remove } from './components';
 import styles from './Item.module.css';
+import useSections from '@/src/hooks/useSections';
+import { BLANK_TASK, TaskType, is_new_task } from '@/src/types/Task';
+import { Button, Checkbox, Drawer, Link, TextField, debounce } from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
+import EditTaskForm from '../../../task/EditTaskForm'
+import AutoTaskCreator from '@/src/components/Llm/AutoTaskCreator';
+import useTimeConverter from '@/src/hooks/useTimeConverter'
+import { TaskId } from '@/src/types/Section';
+import { useRouter } from 'next/router';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export interface Props {
   dragOverlay?: boolean;
@@ -23,7 +31,7 @@ export interface Props {
   style?: React.CSSProperties;
   transition?: string | null;
   wrapperStyle?: React.CSSProperties;
-  value: React.ReactNode;
+  value: UniqueIdentifier;
   onRemove?(): void;
   renderItem?(args: {
     dragOverlay: boolean;
@@ -66,6 +74,88 @@ export const Item = React.memo(
       },
       ref
     ) => {
+      const { sections, getTask, updateTask } = useSections();
+      const [convert] = useTimeConverter();
+      const [task, setTask] = useState<TaskType>(BLANK_TASK);
+      const router = useRouter();
+      const projectId: number = parseInt(router.query.projectId as string)
+      // const [drawer, setDrawer] = useState({
+      //   right: false
+      // });
+      // const convertedTime = useMemo(() => convert(task.estimated_time), [task.estimated_time])
+
+      useEffect(() => {
+        setTask(getTask(value) || BLANK_TASK);
+      }, [value, sections])
+
+      useEffect(() => {
+        if (!dragOverlay && !dragging) {
+          console.log('useEffect onTaskChange')
+          onTaskChange(task);
+        }
+      }, [task]);
+
+      const onTaskChange = useCallback(
+        debounce(
+          (
+            _task: TaskType
+          ) => {
+            updateTask(_task)
+          },
+          1000
+        ),
+        []
+      );
+
+      // const toggleDrawer = (open: boolean) => (
+      //   event: React.KeyboardEvent | React.MouseEvent
+      // ) => { 
+      //   if (
+      //     event.type === "keydown" &&
+      //     ((event as React.KeyboardEvent).key === "Tab" ||
+      //       (event as React.KeyboardEvent).key === "Shift")
+      //   ) {
+      //     return;
+      //   }
+
+      //   setDrawer({ right: open });
+      // };
+
+      // const list = () => (
+      //   <Box
+      //     sx={{ width: 500 }}
+      //     role="presentation"
+      //     data-dndkit-disabled-dnd-flag="true"
+      //   >
+      //     <EditTaskForm sectionId={task.section_id} task={task} handleDrawer={setDrawer} setTask={setTask}/>
+      //   </Box>
+      // );
+
+      function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        const { name, value } = e.target;
+        setTask({ ...task, [name]: value });
+      }
+
+      const navigateTask = (taskId: TaskId) => {
+        router.push({
+          query: {
+            projectId: projectId,
+            taskId: taskId
+          }
+        },
+          undefined,
+          { shallow: true }
+        )
+      }
+
+      // const handleStatusChange = () => {
+      //   const newStatus = task.status === 2 ? 1 : 2;
+      //   const updatedTaskStatus = { ...task, status: newStatus }
+      //   updateTask(task.section_id, updatedTaskStatus)
+      //   setTask(updatedTaskStatus as TaskType)
+      //   console.log("handleStatusChange called with task:", task)
+      // }
+
       useEffect(() => {
         if (!dragOverlay) {
           return;
@@ -139,12 +229,58 @@ export const Item = React.memo(
             {...props}
             tabIndex={!handle ? 0 : undefined}
           >
-            {value}
+            {/* {task ? task.title : ''} */}
+            {handle ? <Handle {...handleProps} {...listeners} /> : null}
+            {/* <Checkbox
+              checked={task.status === 2}
+              onChange={handleStatusChange}
+              disabled={is_new_task(task)}
+            /> */}
+            <TextField
+              name="title"
+              // ref={inputRef}
+              value={task.title}
+              onChange={handleChange}
+              size="small"
+              // onBlur={onBlur}
+              data-dndkit-disabled-dnd-flag="true"
+              sx={{
+                width: 360,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    border: 'none'
+                  },
+                  "&:hover fieldset": {
+                    border: '1px solid rgba(0, 0, 0, 0.23)' // ホバー時の枠線スタイル
+                  },
+                }
+              }}
+            >
+            </TextField>
+            {/* <h3>{convertedTime}</h3>
+            <h2>{task.title}</h2> */}
             <span className={styles.Actions}>
               {onRemove ? (
                 <Remove className={styles.Remove} onClick={onRemove} />
               ) : null}
-              {handle ? <Handle {...handleProps} {...listeners} /> : null}
+              <Action onClick={() => navigateTask(task.id)}>
+                <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
+              </Action>
+
+              {/* <Button
+                onClick={toggleDrawer(true)}
+                data-dndkit-disabled-dnd-flag="true"
+              >
+                <MoreVert fontSize='small' />
+              </Button> */}
+              {/* <Drawer
+                anchor="right"
+                open={drawer.right}
+                onClose={toggleDrawer(false)}
+              >
+                {list()}
+              </Drawer> */}
+              {/* <AutoTaskCreator task={task} sectionId={task.section_id} /> */}
             </span>
           </div>
         </li>
@@ -152,3 +288,7 @@ export const Item = React.memo(
     }
   )
 );
+// function updateTask(sectionId: any, updatedTaskStatus: any) {
+//   throw new Error('Function not implemented.');
+// }
+

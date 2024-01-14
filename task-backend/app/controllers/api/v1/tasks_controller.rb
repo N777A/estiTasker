@@ -54,7 +54,7 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title)
+    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status)
   end
  
   def task_update_params

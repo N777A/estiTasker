@@ -1,23 +1,23 @@
 import { create } from 'zustand';
 import apiClient from '../apiClient';
-import { SectionResponseType, SectionType, cloneSections, formatSection, is_sections_equal } from '../types/Section';
+import { SectionId, SectionResponseType, SectionType, TaskId, cloneSection, cloneSections, cloneTasks, formatSection, is_sections_equal } from '../types/Section';
 import { TaskType, is_tasks_equal } from '../types/Task';
 import { UniqueIdentifier } from '@dnd-kit/core';
 
 const useSections = create<{
   currentProjectId: number,
-  sections: Map<UniqueIdentifier, SectionType>,
-  tasks: Map<UniqueIdentifier, TaskType>,
+  sections: Map<SectionId, SectionType>,
+  tasks: Map<TaskId, TaskType>,
   fetchSections: (projectId: number) => void,
   getSection: (sectionId: UniqueIdentifier) => SectionType | undefined,
-  addSection: (section: SectionType, projectId: number) => Promise<number | null>,
-  updateSection: (section: SectionType, projectId: number) => void,
-  deleteSection: (sectionId: UniqueIdentifier) => void,
-  getTask: (taskId: UniqueIdentifier) => TaskType | undefined,
-  addTask: (sectionId: UniqueIdentifier, task: TaskType) => Promise<void>,
-  updateTask: (sectionId: UniqueIdentifier, task: TaskType) => void,
-  deleteTask: (sectionId: UniqueIdentifier, task: TaskType) => void,
-  reorderSection: (sectionId: UniqueIdentifier, previousSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => void;
+  addSection: (section: SectionType) => Promise<number | null>,
+  updateSection: (section: SectionType) => void,
+  deleteSection: (sectionId: SectionId) => void,
+  getTask: (taskId: TaskId) => TaskType | undefined,
+  addTask: (sectionId: SectionId, task: TaskType) => Promise<void>,
+  updateTask: (task: TaskType) => Promise<void>,
+  deleteTask: (sectionId: SectionId, taskId: TaskId) => void,
+  // reorderSection: (sectionId: UniqueIdentifier, previousSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => void;
 }>((set, get) => {
   const INIT_STATE = {
     currentProjectId: 0,
@@ -52,12 +52,15 @@ const useSections = create<{
     }
   }
 
-  const getSection = (sectionId: UniqueIdentifier) => {
-    return get().sections.get(sectionId)
+  const getSection = (sectionId: UniqueIdentifier): SectionType | undefined => {
+    sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
+    let section = get().sections.get(sectionId)
+    return section ? cloneSection(section) : undefined
   }
 
-  const addSection = async (section: SectionType, projectId: number) => {
+  const addSection = async (section: SectionType) => {
     try {
+      const projectId = get().currentProjectId;
       const res = await apiClient.post<SectionResponseType>(`/projects/${projectId}/sections`, { section: section })
       const _section = res.data
       set((state) => {
@@ -73,7 +76,7 @@ const useSections = create<{
     }
   }
 
-  const updateSection = async (section: SectionType, projectId: number) => {
+  const updateSection = async (section: SectionType) => {
     const _old_value: SectionType | undefined = get().sections.get(section.id)
     if (!_old_value || is_sections_equal(_old_value, section)) {
       return;
@@ -95,12 +98,13 @@ const useSections = create<{
   }
 
   const deleteSection = async (sectionId: UniqueIdentifier) => {
+    sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
     try {
       await apiClient.delete(`/sections/${sectionId}`)
       set((state) => {
         state.sections.delete(sectionId);
         return {
-          sections: new Map<UniqueIdentifier, SectionType>(state.sections)
+          sections: cloneSections(state.sections)
         }
       })
     } catch (error) {
@@ -108,21 +112,25 @@ const useSections = create<{
     }
   }
 
-  const getTask = (taskId: UniqueIdentifier) => {
-    return get().tasks.get(taskId)
+  const getTask = (taskId: TaskId): TaskType | undefined => {
+    let task = get().tasks.get(taskId)
+    return task ? JSON.parse(JSON.stringify(task)) : undefined;
   }
 
   const addTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
+    sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
     try {
       console.log("add task")
       const res = await apiClient.post<TaskType>(`/sections/${sectionId}/tasks`, { task: task });
       set((state) => {
         const _task = res.data
-        console.log(_task)
+        // console.log(_task)
         state.sections.get(sectionId)?.tasks.set(_task.id, _task)
-        console.log(state.sections.get(sectionId)?.tasks.get(_task.id))
+        // console.log(state.sections.get(sectionId)?.tasks.get(_task.id))
+        state.tasks.set(_task.id, _task)
         return {
-          sections: cloneSections(state.sections)
+          sections: cloneSections(state.sections),
+          tasks: cloneTasks(state.tasks)
         }
       })
       console.log("addTask called with sectionId:", sectionId, "and task:", task)
@@ -131,8 +139,8 @@ const useSections = create<{
     }
   }
 
-  const updateTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
-    const _old_value: TaskType | undefined = get().sections.get(sectionId)?.tasks.get(task.id)
+  const updateTask = async (task: TaskType) => {
+    const _old_value = getTask(task.id)
     if (!_old_value || is_tasks_equal(_old_value, task)) {
       return;
     }
@@ -141,50 +149,58 @@ const useSections = create<{
       const res = await apiClient.put<TaskType>(`/tasks/${task.id}`, { task: task });
       set((state) => {
         const _task = res.data
-        state.sections.get(sectionId)?.tasks.set(_task.id, _task)
-        return {
-          sections: cloneSections(state.sections)
+        state.sections.get(_task.section_id)?.tasks.set(_task.id, _task)
+        if (_old_value.section_id !== _task.section_id) {
+          state.sections.get(_old_value.section_id)?.tasks.delete(task.id)
         }
-      })
-      console.log("updateTask called with sectionId:", sectionId, "and task:", task)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const deleteTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
-    try {
-      console.log("delete task")
-      await apiClient.delete(`/tasks/${task.id}`)
-      set((state) => {
-        state.sections.get(sectionId)?.tasks.delete(task.id)
-        return {
-          sections: cloneSections(state.sections)
-        }
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const reorderSection = async (sectionId: UniqueIdentifier, previouSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => {
-    try {
-      const res = await apiClient.patch(`/sections/${sectionId}/update_position`, {
-        previous_section_id: previouSectionId,
-        next_section_id: nextSectionId
-      });
-
-      set((state) => {
-        const _section = res.data
-        state.sections.set(_section.id, formatSection(_section));
+        state.tasks.set(_task.id, _task)
         return {
           sections: cloneSections(state.sections),
+          tasks: cloneTasks(state.tasks)
+        }
+      })
+      // console.log("updateTask called with sectionId:", task.section_id, "and task:", task)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const deleteTask = async (sectionId: SectionId, taskId: TaskId) => {
+    sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
+    try {
+      console.log("delete task")
+      await apiClient.delete(`/tasks/${taskId}`)
+      set((state) => {
+        state.sections.get(sectionId)?.tasks.delete(taskId)
+        state.tasks.delete(taskId)
+        return {
+          sections: cloneSections(state.sections),
+          tasks: cloneTasks(state.tasks)
         }
       })
     } catch (error) {
       console.error(error)
     }
   }
+
+  // const reorderSection = async (sectionId: UniqueIdentifier, previouSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => {
+  //   try {
+  //     const res = await apiClient.patch(`/sections/${sectionId}/update_position`, {
+  //       previous_section_id: previouSectionId,
+  //       next_section_id: nextSectionId
+  //     });
+
+  //     set((state) => {
+  //       const _section = res.data
+  //       state.sections.set(_section.id, formatSection(_section));
+  //       return {
+  //         sections: cloneSections(state.sections),
+  //       }
+  //     })
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
   return {
     ...INIT_STATE,
@@ -197,7 +213,7 @@ const useSections = create<{
     addTask,
     updateTask,
     deleteTask,
-    reorderSection,
+    // reorderSection,
   }
 })
 
