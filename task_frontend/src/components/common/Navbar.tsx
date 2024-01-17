@@ -1,6 +1,8 @@
 import React from 'react';
 import { handleLogout } from '../../auth'
 import { parseCookies } from "nookies";
+import Link from 'next/link';
+import { Button } from '@mui/material';
 
 const Navbar: React.FC = () => {
 
@@ -13,15 +15,16 @@ const Navbar: React.FC = () => {
   }
   
   return (
-    <nav className="flex border-b-2 p-2">
-      <div className="text-xs">プロジェクト管理ツール</div>
+    <nav className="flex border-b-2 p-2 h-8">
+      <div className="text-xs">
+        <Link href="/projects" className='text-blue-600 font-bold' >
+          EstiTasker
+        </Link>
+      </div>
       <div className="grow"></div>
-      <button className="text-xs" onClick={handleLogout}>
+      <Button className="text-xs" onClick={handleLogout}>
         ログアウト
-      </button>
-      {/* <button onClick={handleCashe}>
-        キャッシュ確認
-      </button> */}
+      </Button>
     </nav>
   )
 }

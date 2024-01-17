@@ -54,11 +54,11 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status)
+    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time)
   end
  
   def task_update_params
-    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status)
+    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time)
   end
 
   def calculate_new_position(previous_id, next_id)

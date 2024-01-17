@@ -129,7 +129,7 @@ export default function SignUp() {
             <Button
               type="submit"
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{ mt: 3, mb: 2 }}
             >
               新規登録

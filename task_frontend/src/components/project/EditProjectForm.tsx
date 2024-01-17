@@ -12,7 +12,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 600,
   bgcolor: 'background.paper',
   border: '1px solid #000',
   boxShadow: 24,
@@ -71,6 +71,7 @@ const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
             onChange={handleChange}
             error={!!error.description}
             helperText={error.description}
+            minRows="10"
           />
           <div>
             <Button

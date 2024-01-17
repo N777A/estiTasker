@@ -213,7 +213,6 @@ const useSections = create<{
     addTask,
     updateTask,
     deleteTask,
-    // reorderSection,
   }
 })
 

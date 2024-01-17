@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import CreateProjectForm from '@/src/components/project/CreateProjectForm';
 import useProjects from "@/src/hooks/useProjects";
 import { List, ListItem, ListItemButton } from "@mui/material";
+import CatCommentTop from "../Llm/CatCommentTop";
 
 const ProjectIndex: React.FC = () => {
   const { projects, fetchProjects } = useProjects();
@@ -14,6 +15,7 @@ const ProjectIndex: React.FC = () => {
   return (
     <div className="p-2">
       <div className="flex items-center">
+        <CatCommentTop />
         <h2 className="text-lg mr-4">プロジェクト一覧</h2>
         <CreateProjectForm />
       </div>

@@ -81,7 +81,6 @@ function DroppableContainer({
     ? (id === over.id && active?.data.current?.type !== 'container') ||
     items.includes(over.id)
     : false;
-
   return (
     <Container
       ref={disabled ? undefined : setNodeRef}
@@ -90,6 +89,9 @@ function DroppableContainer({
         transition,
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.5 : undefined,
+        display: 'flex',
+        flexWrap: 'nowrap',
+        overflowX: 'auto',
       }}
       hover={isOverContainer}
       handleProps={{
@@ -470,6 +472,9 @@ export function MultipleContainers({
           boxSizing: 'border-box',
           padding: 20,
           gridAutoFlow: vertical ? 'row' : 'column',
+          maxHeight: 'calc(100vh - 5rem)',
+          overflowY: 'auto',
+          width: '100%'
         }}
       >
         <SortableContext
@@ -521,7 +526,7 @@ export function MultipleContainers({
               onClick={handleAddColumn}
               placeholder
             >
-              + Add column
+              + セクションを追加
             </DroppableContainer>
           )}
         </SortableContext>

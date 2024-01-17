@@ -77,12 +77,13 @@ export const Item = React.memo(
       const { sections, getTask, updateTask } = useSections();
       const [convert] = useTimeConverter();
       const [task, setTask] = useState<TaskType>(BLANK_TASK);
+      const [isEditing, setIsEditing] = useState(false);
       const router = useRouter();
       const projectId: number = parseInt(router.query.projectId as string)
       // const [drawer, setDrawer] = useState({
       //   right: false
       // });
-      // const convertedTime = useMemo(() => convert(task.estimated_time), [task.estimated_time])
+      const convertedTime = useMemo(() => convert(task.estimated_time), [task.estimated_time])
 
       useEffect(() => {
         setTask(getTask(value) || BLANK_TASK);
@@ -106,6 +107,9 @@ export const Item = React.memo(
         ),
         []
       );
+      const handleTitleClick = () => {
+        setIsEditing(true);
+      };
 
       // const toggleDrawer = (open: boolean) => (
       //   event: React.KeyboardEvent | React.MouseEvent
@@ -119,22 +123,20 @@ export const Item = React.memo(
       //   }
 
       //   setDrawer({ right: open });
-      // };
-
-      // const list = () => (
-      //   <Box
-      //     sx={{ width: 500 }}
-      //     role="presentation"
-      //     data-dndkit-disabled-dnd-flag="true"
-      //   >
-      //     <EditTaskForm sectionId={task.section_id} task={task} handleDrawer={setDrawer} setTask={setTask}/>
-      //   </Box>
-      // );
+      // }
 
       function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
         setTask({ ...task, [name]: value });
       }
+
+      const handleFocus = (e: React.FocusEvent<HTMLInputElement| HTMLTextAreaElement>) => {
+        e.target.select();
+      };
+
+      const handleBlur = () => {
+        setIsEditing(false);
+      };
 
       const navigateTask = (taskId: TaskId) => {
         router.push({
@@ -236,11 +238,45 @@ export const Item = React.memo(
               onChange={handleStatusChange}
               disabled={is_new_task(task)}
             /> */}
-            <TextField
+            {isEditing ? (
+              <TextField
+                name="title"
+                value={task.title}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                InputProps={{
+                  onFocus: handleFocus,
+                  className: "text-blue-500"
+                }}
+                autoFocus
+                data-dndkit-disabled-dnd-flag="true"
+                className="w-1/2"
+                sx={{
+                  width: 360,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      border: 'none'
+                    },
+                    "&:hover fieldset": {
+                      border: '1px solid rgba(0, 0, 0, 0.23)'
+                    },
+                  }
+                }}
+              />
+            ) : (
+              <p 
+              onClick={handleTitleClick}
+              className="w-1/2 text-blue-500 truncate"
+              >
+                {task.title}
+              </p>
+            )}
+            {/* <TextField
               name="title"
               // ref={inputRef}
               value={task.title}
               onChange={handleChange}
+              onClick={handleFocus}
               size="small"
               // onBlur={onBlur}
               data-dndkit-disabled-dnd-flag="true"
@@ -251,14 +287,13 @@ export const Item = React.memo(
                     border: 'none'
                   },
                   "&:hover fieldset": {
-                    border: '1px solid rgba(0, 0, 0, 0.23)' // ホバー時の枠線スタイル
+                    border: '1px solid rgba(0, 0, 0, 0.23)'
                   },
                 }
               }}
             >
-            </TextField>
-            {/* <h3>{convertedTime}</h3>
-            <h2>{task.title}</h2> */}
+            </TextField> */}
+            <h3>{convertedTime}</h3>
             <span className={styles.Actions}>
               {onRemove ? (
                 <Remove className={styles.Remove} onClick={onRemove} />
@@ -266,21 +301,8 @@ export const Item = React.memo(
               <Action onClick={() => navigateTask(task.id)}>
                 <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
               </Action>
-
-              {/* <Button
-                onClick={toggleDrawer(true)}
-                data-dndkit-disabled-dnd-flag="true"
-              >
-                <MoreVert fontSize='small' />
-              </Button> */}
-              {/* <Drawer
-                anchor="right"
-                open={drawer.right}
-                onClose={toggleDrawer(false)}
-              >
-                {list()}
-              </Drawer> */}
-              {/* <AutoTaskCreator task={task} sectionId={task.section_id} /> */}
+              <AutoTaskCreator task={task} sectionId={task.section_id} />
+              {/* <button onClick={() => console.log(task)}>test</button> */}
             </span>
           </div>
         </li>
@@ -288,7 +310,3 @@ export const Item = React.memo(
     }
   )
 );
-// function updateTask(sectionId: any, updatedTaskStatus: any) {
-//   throw new Error('Function not implemented.');
-// }
-

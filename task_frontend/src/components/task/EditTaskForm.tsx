@@ -7,6 +7,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs';
 import { TaskId } from "@/src/types/Section";
+import "react-widgets/styles.css";
+import NumberPicker from "react-widgets/NumberPicker";
+import useTimeConverter from "@/src/hooks/useTimeConverter";
 
 export type EditTaskFormProps = {
   taskId: TaskId,
@@ -16,16 +19,27 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
   const [dateForPicker, setDateForPicker] = useState<Dayjs | null>(null);
   const { sections, getTask, updateTask } = useSections()
   const [editTask, setEditTask] = useState<TaskType>(BLANK_TASK)
+  const [ ,hoursAndMinutes ] = useTimeConverter();
 
   useEffect(() => {
     setEditTask(getTask(taskId) || BLANK_TASK);
   }, [taskId, sections])
 
+
+  useEffect(() => {
+    const times = hoursAndMinutes(Number(editTask.estimated_time));
+    setNewHours(times.hours);
+    setNewMinutes(times.minutes);
+  }, [editTask]);
+
+  const [newhours, setNewHours] = useState(0);
+  const [newMinutes, setNewMinutes] = useState(0)
+
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (editTask) {
       setEditTask({ ...editTask, [name]: value })
-      // setTask({ ...task, [name]: value })
     }
   }
 
@@ -63,6 +77,24 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
     }
   }, [editTask])
 
+  const formatHours = (value: number) => {
+    return `${value} 時間`;
+  };
+
+  const formatMinutes = (value: number) => {
+    return `${value} 分`;
+  };
+  const test = () => {
+    const times = hoursAndMinutes(editTask.estimated_time)
+    console.log(times)
+  }
+
+  const handleBlur = () => {
+    updateTask({
+      ...editTask,
+      estimated_time: newhours * 60 + newMinutes
+    })
+  }
   return (
     <div className="p-4 w-auto">
       <h2 className="mb-2"></h2>
@@ -96,7 +128,36 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
           />
         </Box>
       </LocalizationProvider>
-      {/* <DeleteTaskButton sectionId={sectionId} task={task} /> */}
+      <NumberPicker
+        value={newhours}
+        defaultValue={0}
+        min={0}
+        format={formatHours}
+        style={{ width: '150px' }}
+        onChange={value => {
+          if (value !== null) {
+            setNewHours(value);
+          }
+        }}
+        onBlur={handleBlur}
+      />
+      <NumberPicker
+        value={newMinutes}
+        label='hours'
+        defaultValue={0}
+        step={5}
+        min={0}
+        max={55}
+        format={formatMinutes}
+        style={{ width: '150px' }}
+        onChange={value => {
+          if (value !== null) {
+            setNewMinutes(value);
+          }
+        }}
+        onBlur={handleBlur}
+      />
+      {/* <button onClick={test}>test</button> */}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SectionTitleEditorProps } from "../../types/Section";
 import apiClient from "@/src/apiClient";
 

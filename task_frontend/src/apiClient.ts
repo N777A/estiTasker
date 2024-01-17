@@ -14,12 +14,6 @@ apiClient.interceptors.request.use((config) => {
   config.headers.uid = parseCookies().uid;
   config.headers.client = parseCookies().client;
   config.headers["access-token"] = parseCookies()["access-token"];
-
-  console.log('Sending cookies🍪:', {
-    uid: config.headers['uid'],
-    client: config.headers['client'],
-    "access-token": config.headers['access-token'],
-  });
   return config;
 });
 

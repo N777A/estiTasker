@@ -4,7 +4,7 @@ class Api::V1::LlmController < ApplicationController
 
   def create_tasks
     @tasks = invoke(
-      "Human: Break down to Tasks based on description. Estimate Time for each task for beginner developer.
+      "Human: Break down to Tasks based on description. Estimate Time for each task.
       Convert estimated to minutes.
       Follow output-format and wrap result in <output></output> tag. output in Japanese.
       <description>

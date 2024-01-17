@@ -98,6 +98,7 @@ export const is_sections_equal = (section1: SectionType, section2: SectionType):
 }
 
 // Map<SectionId, SectionType> から { SectionId: TaskId[] } へ変換
+// positionで並び替え
 export const sections2items = (sections: Map<SectionId, SectionType>): Items => {
   return Object.fromEntries(Array.from(sections.values()).map(section => [
     section.id,

@@ -3,10 +3,17 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useLlm } from "@/src/hooks/useLlm";
 import useSections from "@/src/hooks/useSections";
 import React, { useState } from "react";
+import { TaskType } from "@/src/types/Task";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
-const AutoTaskCreator = React.memo(({ task, sectionId }) => {
+type AutoTaskCreatorProps = {
+  task: TaskType;
+  sectionId: UniqueIdentifier;
+};
+
+const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) => {
   const { createTasks } = useLlm;
-  const { addTask } = useSections();
+  const { addTask, sections } = useSections();
   const [isCreating, setIsCreating] = useState(false);
 
   const modalStyle = {
@@ -14,21 +21,41 @@ const AutoTaskCreator = React.memo(({ task, sectionId }) => {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    outline: 'none'
+    outline: 'none',
   };
 
+  
   const handleClick = async () => {
     try {
       setIsCreating(true)
       const formatInfo = { title: task.title, description: task.description }
-      const aiTasks = await createTasks(formatInfo)
-      console.log('aiTasks:', aiTasks)
+      const formatInfoString = JSON.stringify(formatInfo);
+      const aiTasks = await createTasks(formatInfoString)
 
       if (aiTasks?.data.tasks) {
-        for (const task of aiTasks.data.tasks) {
-          const modefiedTitle = formatInfo.title + ' / ' + task.title
-          const modefiedTask = { ...task, title: modefiedTitle }
+        const sectionTasks = Array.from(sections.get(sectionId)?.tasks.values() ?? []);
+        sectionTasks.sort((taskA, taskB) => taskA.position - taskB.position)
+
+        let previousPosition = task.position;
+        const nextTask = sectionTasks.findIndex(task => task.position > previousPosition)
+        let gap, startPosition;
+      
+
+        let newPosition;
+          if (nextTask !== -1) {
+            const nextTaskPosition = sectionTasks[nextTask].position;
+            gap = (nextTaskPosition - previousPosition) / (aiTasks.data.tasks.length + 1)
+            startPosition = previousPosition + gap;
+          } else {
+            startPosition = previousPosition + 1;
+            gap = 1
+          }
+
+        for (const aiTask of aiTasks.data.tasks) {
+          const modefiedTitle = formatInfo.title + ' / ' + aiTask.title
+          const modefiedTask = { ...task, title: modefiedTitle, position: startPosition }
           await addTask(sectionId, modefiedTask);
+          startPosition += gap;
         }
       }
       setIsCreating(false)
@@ -45,7 +72,7 @@ const AutoTaskCreator = React.memo(({ task, sectionId }) => {
           size='small'
           onClick={handleClick}
         >
-          <AutoAwesomeIcon />
+          <AutoAwesomeIcon fontSize="small"/>
         </IconButton>
       </Tooltip>
       {isCreating && (

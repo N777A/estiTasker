@@ -115,15 +115,15 @@ const CatCommentTop = () => {
     borderRadius: '10px',
     border: '2px solid rgba(97, 97, 97, 0.3)',
     position: 'relative' as 'relative',
-    maxWidth: '300px', // 最大幅を調整
-    minWidth: '100px', // 最小幅を設定
+    maxWidth: '300px',
+    minWidth: '100px',
   };
   const containerStyle = {
     position: 'absolute' as 'absolute',
     bottom: '15px',
     right: '15px',
-    display: 'flex', // Flexboxを使う
-    alignItems: 'center', // 中央揃え
+    display: 'flex',
+    alignItems: 'center',
   };
 
   const pStyle = {

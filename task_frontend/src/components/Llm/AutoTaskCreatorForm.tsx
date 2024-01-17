@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, IconButton, LinearProgress, Modal, TextField, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, LinearProgress, Modal, TextField, Tooltip, Typography } from "@mui/material";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useLlm } from "@/src/hooks/useLlm";
 import useSections from "@/src/hooks/useSections";
@@ -30,7 +30,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
   const [isDisabledButton, setIsDisabledButton] = useState(false);
   const { addSection, addTask } = useSections();
   const { createTasks } = useLlm;
-
+  
   const handleTitleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setAiTitle(e.target.value)
   }
@@ -42,16 +42,19 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
     try {
       setIsDisabledButton(true)
       setIsCreating(true)
-      const aiTasks = await createTasks(aiDescription)
-      console.log('aiTasks:', aiTasks)
-      
+      const formatInfo = { title: aiTitle, description: aiDescription }
+      const formatInfoString = JSON.stringify(formatInfo);
+      const aiTasks = await createTasks(formatInfoString)
       const _section = JSON.parse(JSON.stringify(BLANK_SECTION))
       _section.title = aiTitle
-      const addedSectionId = await addSection(_section, projectId)
+      const addedSectionId = await addSection(_section)
       
       if (addedSectionId !== null && aiTasks?.data.tasks) {
+        let newPosition = 1;
         for (const task of aiTasks.data.tasks) {
+          task.position  = newPosition;
           await addTask(addedSectionId, task);
+          newPosition++;
         }
       }
       setShowForm(false)
@@ -72,7 +75,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
   }
 
   return(
-    <>
+    <div>
     <Tooltip title='AIタスク自動作成'>
         <IconButton
           size='large'
@@ -84,20 +87,28 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
       </Tooltip>
       <Modal open={showForm}>
         <Box sx={style}>
-          <h2 className="mb-2">Task自動作成</h2>
+          <Typography
+            component='p'
+            color='secondary'
+            fontWeight='700'
+            className="mb-4"
+          >
+            タスク自動作成
+          </Typography>
           <TextField
             name="aiTitle"
-            label='aiTitle'
+            label='タイトル'
             placeholder='タイトル'
             value={aiTitle}
             onChange={handleTitleChange}
             color="secondary"
             fullWidth
+            className="mb-4"
           />
           <TextField
             name="aiDescription"
-            label="aiDescription"
-            placeholder="説明"
+            label="タスクの説明欄"
+            placeholder="タスクの説明欄(AIが参考にします)"
             value={aiDescription}
             className="mb-2"
             fullWidth
@@ -105,8 +116,6 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
             color="secondary"
             multiline
             minRows="10"
-            // error={!!error.title}
-            // helperText={error.title}
           />
           <div>
             <Button onClick={resetForm}>キャンセル</Button>
@@ -124,7 +133,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
           </div>
         </Box>
       </Modal>
-    </>
+    </div>
   )
 }
 

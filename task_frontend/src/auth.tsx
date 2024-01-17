@@ -1,7 +1,6 @@
 import router from 'next/router';
 import { parseCookies, destroyCookie } from 'nookies';
 import apiClient from './apiClient'
-import axios, { Axios } from 'axios';
 
 const AUTH_COOKIE_KEYS = ['access-token', 'uid', 'client'];
 const IGNORE_ROUTES = ['/sign_in', '/sign_up'];
@@ -14,13 +13,11 @@ export const isAuthenticated = (): boolean => {
 };
 
 export const requireAuthentication = (pathname:string) => {
-  const middleware = () => {
+  return () => {
     if (!isAuthenticated() && !IGNORE_ROUTES.includes(pathname)) {
       router.replace(SIGN_IN_ROUTE)
     }
   };
-
-  return middleware;
 }
 
 export const handleLogout = async () => {
