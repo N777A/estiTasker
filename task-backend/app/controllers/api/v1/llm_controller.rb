@@ -46,7 +46,7 @@ class Api::V1::LlmController < ApplicationController
   def invoke(prompt)
     resp = @client.invoke_model({
       body: {
-        prompt:,
+        prompt: prompt,
         temperature: 0.7,
         top_p: 1.0,
         top_k: 5,

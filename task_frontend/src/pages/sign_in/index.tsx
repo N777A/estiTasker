@@ -16,19 +16,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { setCookie, destroyCookie } from "nookies";
 import router from 'next/router';
 import apiClient from '../../apiClient'
-
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import axios, { AxiosError } from 'axios';
+import { Alert } from '@mui/material';
 
 const defaultTheme = createTheme();
 
@@ -64,7 +53,13 @@ export default function SignIn() {
         destroyCookie(null, "client");
         destroyCookie(null, "access-token");
         setIsError(true);
-        setErrorMessage("エラーが発生しました。");
+        if (axios.isAxiosError(err)) {
+          if (err.response && err.response.status === 401) {
+            setErrorMessage('Email又はパスワードが間違えています。')
+          } else {
+            setErrorMessage("エラーが発生しました。");
+          }
+        }
       }
     })();
   };
@@ -110,6 +105,17 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="ログイン状態を保存する"
             />
+            {isError ? (
+              <Alert
+                onClose={() => {
+                  setIsError(false);
+                  setErrorMessage("");
+                }}
+                severity='error'
+                >
+                  {errorMessage}
+                </Alert>
+            ): null}
             <Button
               type="submit"
               fullWidth
@@ -132,7 +138,6 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );

@@ -38,7 +38,7 @@ const ProjectTaskPage: NextPage = () => {
       <div className='grow'>
         <div className='flex items-center border-b-2 p-2 h-12'>
           <h2 className="text-lg mr-4">{project?.title}</h2>
-       
+
           <IconMenu>
             <MenuItem>
               <EditProjectForm project={project} />

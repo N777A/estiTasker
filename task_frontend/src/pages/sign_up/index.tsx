@@ -63,7 +63,7 @@ export default function SignUp() {
         destroyCookie(null, 'client');
         destroyCookie(null, 'access-token');
         setIsError(true);
-        setErrorMessage("エラーが発生しました。")
+        setErrorMessage("正しく入力してください")
       }
     })();
   };
