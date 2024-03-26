@@ -5,14 +5,6 @@ import Link from 'next/link';
 import { Button } from '@mui/material';
 
 const Navbar: React.FC = () => {
-
-  const handleCashe = () => {
-    console.log(
-      parseCookies().client,
-      parseCookies().uid,
-      parseCookies()["access-token"]
-    );
-  }
   
   return (
     <nav className="flex border-b-2 p-2 h-8">

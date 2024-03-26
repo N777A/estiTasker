@@ -17,7 +17,6 @@ const useSections = create<{
   addTask: (sectionId: SectionId, task: TaskType) => Promise<void>,
   updateTask: (task: TaskType) => Promise<void>,
   deleteTask: (sectionId: SectionId, taskId: TaskId) => void,
-  // reorderSection: (sectionId: UniqueIdentifier, previousSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => void;
 }>((set, get) => {
   const INIT_STATE = {
     currentProjectId: 0,
@@ -27,10 +26,8 @@ const useSections = create<{
 
   const fetchSections = async (projectId: number) => {
     try {
-      // Clear displayed sections
       set(() => ({ sections: new Map<UniqueIdentifier, SectionType>() }));
 
-      // Fetch Sections from Backend
       console.log("Fetch sections")
       const res = await apiClient.get<SectionResponseType[]>(`/projects/${projectId}/sections`);
       const _sectionsMap = new Map<UniqueIdentifier, SectionType>();
@@ -124,9 +121,7 @@ const useSections = create<{
       const res = await apiClient.post<TaskType>(`/sections/${sectionId}/tasks`, { task: task });
       set((state) => {
         const _task = res.data
-        // console.log(_task)
         state.sections.get(sectionId)?.tasks.set(_task.id, _task)
-        // console.log(state.sections.get(sectionId)?.tasks.get(_task.id))
         state.tasks.set(_task.id, _task)
         return {
           sections: cloneSections(state.sections),
@@ -159,7 +154,6 @@ const useSections = create<{
           tasks: cloneTasks(state.tasks)
         }
       })
-      // console.log("updateTask called with sectionId:", task.section_id, "and task:", task)
     } catch (error) {
       console.error(error)
     }
@@ -182,25 +176,6 @@ const useSections = create<{
       console.error(error)
     }
   }
-
-  // const reorderSection = async (sectionId: UniqueIdentifier, previouSectionId: UniqueIdentifier, nextSectionId: UniqueIdentifier) => {
-  //   try {
-  //     const res = await apiClient.patch(`/sections/${sectionId}/update_position`, {
-  //       previous_section_id: previouSectionId,
-  //       next_section_id: nextSectionId
-  //     });
-
-  //     set((state) => {
-  //       const _section = res.data
-  //       state.sections.set(_section.id, formatSection(_section));
-  //       return {
-  //         sections: cloneSections(state.sections),
-  //       }
-  //     })
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 
   return {
     ...INIT_STATE,

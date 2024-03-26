@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-import { ListProjectResponseType, CreateProjectResponseType, ProjectType } from '../types/Project';
+import { ListProjectResponseType, ProjectType } from '../types/Project';
 import apiClient from '../apiClient';
-import { SectionType } from '../types/Section';
-import { TaskType } from '../types/Task';
 
 const useProjects = create<{
   projects: { [key: string]: ProjectType },

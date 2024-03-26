@@ -77,13 +77,10 @@ export const Container = forwardRef<HTMLDivElement, Props>(
     };
     
     const addBlankTask = (sectionId: UniqueIdentifier = 0) => {
-      console.log("add blank task")
       const tasks = Array.from(section.tasks.values()).sort((taskA, taskB) => taskA.position - taskB.position)
-      console.log('✊',tasks)
       let maxPosition = 0;
       if (tasks.length > 0) {
         maxPosition =  tasks[tasks.length - 1].position
-        console.log("Max position found:", maxPosition);
       }
        
       const _task = {
@@ -91,7 +88,6 @@ export const Container = forwardRef<HTMLDivElement, Props>(
         position: maxPosition + 1
       }
       addTask(sectionId, _task)
-      console.log("New task to add:", _task);
       setSection(prev => {
         const updatedTasks = new Map(prev.tasks);
       

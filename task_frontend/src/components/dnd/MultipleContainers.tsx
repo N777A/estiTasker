@@ -275,7 +275,6 @@ export function MultipleContainers({
   }, [items]);
 
   useEffect(() => {
-    console.log("clone", initialItems)
     setItems(initialItems || {});
     setContainers(Object.keys(initialItems || {}).sort(
       (sectionIdA, sectionIdB) => (getSection(sectionIdA)?.position || 0) - (getSection(sectionIdB)?.position || 0)
@@ -354,7 +353,6 @@ export function MultipleContainers({
       }}
       onDragEnd={({ active, over }) => {
         if (active.id in items && over?.id) {
-          // バックエンドの更新
           const activeIndex = containers.indexOf(active.id);
           const overIndex = containers.indexOf(over.id);
           let section = getSection(active.id)
@@ -371,7 +369,6 @@ export function MultipleContainers({
             updateSection(section)
           }
 
-          // Section の並び替え
           setContainers((containers) => {
             const activeIndex = containers.indexOf(active.id);
             const overIndex = containers.indexOf(over.id);
@@ -428,10 +425,8 @@ export function MultipleContainers({
           const activeIndex = items[activeContainer].indexOf(active.id);
           const overIndex = items[overContainer].indexOf(overId);
 
-          // バックエンドの更新
           let task = getTask(active.id)
           const newContainer = typeof overContainer === 'string' ? parseInt(overContainer) : overContainer;
-          console.log(task, activeIndex, overIndex, activeContainer, overContainer, newContainer)
           if (task && (activeIndex !== overIndex || task.section_id !== newContainer)) {
             task.section_id = newContainer;
             if (overIndex === 0) {
@@ -444,11 +439,9 @@ export function MultipleContainers({
               task.position = ((prevItem?.position || 0) + (nextItem?.position || 0)) / 2
             }
             updateTask(task)
-            console.log(task)
           }
 
           if (activeIndex !== overIndex) {
-            // Task の並び替え
             setItems((items) => ({
               ...items,
               [overContainer]: arrayMove(
@@ -627,17 +620,7 @@ export function MultipleContainers({
   }
 
   function handleAddColumn() {
-    // const newContainerId = getNextContainerId();
 
-    // unstable_batchedUpdates(() => {
-    //   setContainers((containers) => [...containers, newContainerId]);
-    //   setItems((items) => ({
-    //     ...items,
-    //     [newContainerId]: [],
-    //   }));
-    // });
-
-    // Add Blank Section
     const maxPosition: number = getSection(containers.at(containers.length - 1) || 0)?.position || 0;
 
     const newPosition = maxPosition + 1

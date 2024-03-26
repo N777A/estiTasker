@@ -1,13 +1,12 @@
 import { NextPage } from "next"
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import SectionIndex from "@/src/components/section/SectionIndex2";
+import { useEffect } from "react";
+import SectionIndex from "@/src/components/section/SectionIndex";
 import EditProjectForm from "@/src/components/project/EditProjectForm";
 import DeleteProjectButton from "@/src/components/project/DeleteProjectButton";
 import IconMenu from "@/src/components/common/IconMenu";
 import { MenuItem } from "@mui/material";
 import useProjects from "@/src/hooks/useProjects";
-import { useLlm } from "@/src/hooks/useLlm";
 import EditTaskForm from "@/src/components/task/EditTaskForm";
 import IconButton from '@mui/material/IconButton';
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
@@ -18,8 +17,6 @@ const ProjectTaskPage: NextPage = () => {
   const projectId: number = parseInt(router.query.projectId as string)
   const taskId: number = parseInt(router.query.taskId as string)
   const { project, fetchProject } = useProjects();
-  const { createTasks } = useLlm;
-  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (projectId) fetchProject(projectId);
   }, [projectId])
@@ -52,8 +49,8 @@ const ProjectTaskPage: NextPage = () => {
           </IconMenu>
           <AutoTaskCreatorForm projectId={projectId} />
         </div>
-        <SectionIndex isLoading={isLoading} />
-        {/* <small>Icon by icons8.com</small> */}
+        <SectionIndex />
+        <small>Icon by icons8.com</small>
       </div>
       <div className={`border-l-2 transition-all overflow-hidden ${taskId ? "w-96" : "w-0"}`}>
         <div className='flex items-center justify-end border-b-2 p-2 h-12'>

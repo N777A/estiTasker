@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
-import { Box, Button, TextField, debounce } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import { Box, TextField, debounce } from "@mui/material";
 import useSections from "@/src/hooks/useSections";
 import { BLANK_TASK, TaskType } from "@/src/types/Task";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -45,7 +45,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
 
   useEffect(() => {
     if (editTask.id > 0) {
-      console.log('useEffect!!!')
       onTaskChange(editTask);
     }
   }, [editTask]);
@@ -84,10 +83,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
   const formatMinutes = (value: number) => {
     return `${value} 分`;
   };
-  const test = () => {
-    const times = hoursAndMinutes(editTask.estimated_time)
-    console.log(times)
-  }
 
   const handleBlur = () => {
     updateTask({
@@ -157,7 +152,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
         }}
         onBlur={handleBlur}
       />
-      {/* <button onClick={test}>test</button> */}
     </div>
   )
 }

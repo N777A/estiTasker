@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CreateProjectForm from '@/src/components/project/CreateProjectForm';
 import useProjects from "@/src/hooks/useProjects";
 import { List, ListItem, ListItemButton } from "@mui/material";

@@ -80,9 +80,6 @@ export const Item = React.memo(
       const [isEditing, setIsEditing] = useState(false);
       const router = useRouter();
       const projectId: number = parseInt(router.query.projectId as string)
-      // const [drawer, setDrawer] = useState({
-      //   right: false
-      // });
       const convertedTime = useMemo(() => convert(task.estimated_time), [task.estimated_time])
 
       useEffect(() => {
@@ -91,7 +88,6 @@ export const Item = React.memo(
 
       useEffect(() => {
         if (!dragOverlay && !dragging) {
-          console.log('useEffect onTaskChange')
           onTaskChange(task);
         }
       }, [task]);
@@ -110,20 +106,6 @@ export const Item = React.memo(
       const handleTitleClick = () => {
         setIsEditing(true);
       };
-
-      // const toggleDrawer = (open: boolean) => (
-      //   event: React.KeyboardEvent | React.MouseEvent
-      // ) => { 
-      //   if (
-      //     event.type === "keydown" &&
-      //     ((event as React.KeyboardEvent).key === "Tab" ||
-      //       (event as React.KeyboardEvent).key === "Shift")
-      //   ) {
-      //     return;
-      //   }
-
-      //   setDrawer({ right: open });
-      // }
 
       function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
@@ -149,15 +131,7 @@ export const Item = React.memo(
           { shallow: true }
         )
       }
-
-      // const handleStatusChange = () => {
-      //   const newStatus = task.status === 2 ? 1 : 2;
-      //   const updatedTaskStatus = { ...task, status: newStatus }
-      //   updateTask(task.section_id, updatedTaskStatus)
-      //   setTask(updatedTaskStatus as TaskType)
-      //   console.log("handleStatusChange called with task:", task)
-      // }
-
+      
       useEffect(() => {
         if (!dragOverlay) {
           return;
@@ -271,28 +245,6 @@ export const Item = React.memo(
                 {task.title}
               </p>
             )}
-            {/* <TextField
-              name="title"
-              // ref={inputRef}
-              value={task.title}
-              onChange={handleChange}
-              onClick={handleFocus}
-              size="small"
-              // onBlur={onBlur}
-              data-dndkit-disabled-dnd-flag="true"
-              sx={{
-                width: 360,
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    border: 'none'
-                  },
-                  "&:hover fieldset": {
-                    border: '1px solid rgba(0, 0, 0, 0.23)'
-                  },
-                }
-              }}
-            >
-            </TextField> */}
             <h3>{convertedTime}</h3>
             <span className={styles.Actions}>
               {onRemove ? (
@@ -302,7 +254,6 @@ export const Item = React.memo(
                 <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
               </Action>
               <AutoTaskCreator task={task} sectionId={task.section_id} />
-              {/* <button onClick={() => console.log(task)}>test</button> */}
             </span>
           </div>
         </li>

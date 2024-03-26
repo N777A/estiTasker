@@ -8,6 +8,13 @@ class Api::V1::ProjectsController < ApplicationController
     render json: { user: @user, projects: @projects}
   end
 
+  def show
+    @user = current_api_v1_user
+    @project = @user.projects.find(params[:id])
+    
+    render json: @project
+  end
+
   def create 
     @user = current_api_v1_user
     @project = @user.projects.new(project_params)
@@ -17,13 +24,6 @@ class Api::V1::ProjectsController < ApplicationController
     else
       render json: @project.errors, status: :unprocessable_entity
     end
-  end
-
-  def show
-    @user = current_api_v1_user
-    @project = @user.projects.find(params[:id])
-    
-    render json: @project
   end
 
   def update

@@ -13,8 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
-import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { setCookie, destroyCookie } from "nookies";
 import router from 'next/router';
 import apiClient from '../../apiClient'
 
@@ -37,11 +36,6 @@ export default function SignIn() {
   const [isError, setIsError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  console.log(
-    parseCookies().client,
-    parseCookies().uid,
-    parseCookies()["access-token"]
-  );
   const handleSubmit = (event: any) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -54,7 +48,6 @@ export default function SignIn() {
           email: data.get("email"),
           password: data.get("password"),
         });
-        console.log(response)
         setCookie(null, "uid", response.headers["uid"], {
           path: "/",
         });
@@ -64,7 +57,6 @@ export default function SignIn() {
         setCookie(null, "access-token", response.headers["access-token"], {
           path: "/",
         });
-        console.log(response);
 
         router.push("/projects");
       } catch (err) {

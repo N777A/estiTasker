@@ -28,7 +28,7 @@ const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) =
   const handleClick = async () => {
     try {
       setIsCreating(true)
-      const formatInfo = { title: task.title, description: task.description }
+      const formatInfo = { title: task.title, description: task.description, estimatedTime: task.estimated_time }
       const formatInfoString = JSON.stringify(formatInfo);
       const aiTasks = await createTasks(formatInfoString)
 
@@ -40,8 +40,6 @@ const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) =
         const nextTask = sectionTasks.findIndex(task => task.position > previousPosition)
         let gap, startPosition;
       
-
-        let newPosition;
           if (nextTask !== -1) {
             const nextTaskPosition = sectionTasks[nextTask].position;
             gap = (nextTaskPosition - previousPosition) / (aiTasks.data.tasks.length + 1)

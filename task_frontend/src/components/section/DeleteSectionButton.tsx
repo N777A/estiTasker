@@ -1,5 +1,4 @@
 import useSections from "@/src/hooks/useSections";
-import { DeleteSectionButtonProps } from "../../types/Section";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import React from "react";
 
