@@ -84,4 +84,6 @@ const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) =
   )
 })
 
+AutoTaskCreator.displayName = 'AutoTaskCreator';
+
 export default AutoTaskCreator;
