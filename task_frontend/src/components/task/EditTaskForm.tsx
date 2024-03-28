@@ -127,7 +127,7 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
         value={newhours}
         defaultValue={0}
         min={0}
-        format={formatHours}
+        format={formatHours as unknown as string}
         style={{ width: '150px' }}
         onChange={value => {
           if (value !== null) {
@@ -138,12 +138,11 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
       />
       <NumberPicker
         value={newMinutes}
-        label='hours'
         defaultValue={0}
         step={5}
         min={0}
         max={55}
-        format={formatMinutes}
+        format={formatMinutes as unknown as string}
         style={{ width: '150px' }}
         onChange={value => {
           if (value !== null) {

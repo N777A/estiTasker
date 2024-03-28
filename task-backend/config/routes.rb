@@ -32,4 +32,5 @@ Rails.application.routes.draw do
       end
     end
   end
+root to: 'api/v1/projects#index'
 end

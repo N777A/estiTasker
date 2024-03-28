@@ -7,6 +7,8 @@ RUN apt-get update                                                              
   && curl -sL https://deb.nodesource.com/setup_14.x | bash -                                                                            \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -                                                                  \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list                                      \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B7B3B788A8D3785C                                                          \
+  && apt-get update --allow-releaseinfo-change                                                                                          \
   && wget https://dev.mysql.com/get/mysql-apt-config_0.8.22-1_all.deb                                                                   \
   && DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.22-1_all.deb                                                           \
   && apt-get update                                                                                                                     \
