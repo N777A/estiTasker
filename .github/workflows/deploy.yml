@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker Image
-        run: docker build -t registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f ./task-backend/Dockerfile.ci ./task_backend
+        run: docker build -t registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f ./task-backend/Dockerfile.ci ./task-backend
 
       - name: Heroku Container Registry Login
         run: heroku container:login
