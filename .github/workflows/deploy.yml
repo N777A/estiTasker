@@ -17,6 +17,6 @@ jobs:
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          email: ${{ secrets.HEROKU_EMAIL }}
           dockerfile_directory: ./task_backend
           docker_options: "--build-arg AN_ARG=an_value"
