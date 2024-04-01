@@ -3,6 +3,8 @@ FROM ruby:2.7.4-buster
 
 ENV RAILS_ENV=production
 
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+
 RUN apt-get update                                                                                                                      \
   && apt-get install                                                                                                                    \
     openssl                                                                                                                             \
