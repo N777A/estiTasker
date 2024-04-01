@@ -1,6 +1,8 @@
 # -*- mode: dockerfile -*-
 FROM ruby:2.7.4-buster
 
+ENV RAILS_ENV=production
+
 RUN apt-get update                                                                                                                      \
   && apt-get install                                                                                                                    \
     openssl                                                                                                                             \
