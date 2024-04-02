@@ -27,6 +27,7 @@ RUN apt-get update                                                              
   && gem install foreman                                                                                                                \
   && apt-get clean
 
+RUN gem install bundler -v 2.4.22
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
