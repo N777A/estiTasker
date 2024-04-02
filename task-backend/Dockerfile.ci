@@ -1,5 +1,5 @@
 # -*- mode: dockerfile -*-
-FROM ruby:3.0.0-buster
+FROM ruby:2.7.4-buster
 
 ENV RAILS_ENV=production
 
@@ -31,7 +31,9 @@ RUN apt-get update                                                              
   && gem install foreman                                                                                                                \
   && apt-get clean
 
-RUN gem install bundler -v 2.4.22
+RUN gem install bundler -v 2.4.22 &&                                                                                                    \
+    bundle _2.4.22_ install
+
 
 RUN mkdir /estiTasker
 WORKDIR /estiTasker

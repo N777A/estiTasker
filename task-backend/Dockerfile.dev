@@ -1,5 +1,5 @@
 # -*- mode: dockerfile -*-
-FROM ruby:3.0.0-buster
+FROM ruby:2.7.4-buster
 
 WORKDIR /estiTasker
 
