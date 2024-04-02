@@ -25,9 +25,9 @@ jobs:
 
       - name: Setup Test Database
         run: |
-          cd task-backend
-          RAILS_ENV=test bundle exec rails db:create
-          RAILS_ENV=test bundle exec rails db:schema:load
+          cd task-backend/config/database.yml
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run RSpec Tests
         run: |
