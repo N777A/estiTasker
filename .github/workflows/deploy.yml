@@ -12,6 +12,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.4'
+
+      - name: Install Dependencies
+        run: |
+          cd task-backend
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+
+      - name: Setup Test Database
+        run: |
+          cd task-backend
+          RAILS_ENV=test bundle exec rails db:create
+          RAILS_ENV=test bundle exec rails db:schema:load
+
+       - name: Run RSpec Tests
+        run: |
+          cd task-backend
+          bundle exec rspec
+
       - name: Build Docker Image
         run: docker build -t registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f ./task-backend/Dockerfile.ci ./task-backend
 

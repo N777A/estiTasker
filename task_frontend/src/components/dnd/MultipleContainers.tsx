@@ -633,7 +633,6 @@ export function MultipleContainers({
 
   function getNextContainerId() {
     const containerIds = Object.keys(items);
-    // TODO: バックエンドから新しいセクションを作成
 
     return containerIds.length
   }

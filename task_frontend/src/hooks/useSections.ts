@@ -28,7 +28,6 @@ const useSections = create<{
     try {
       set(() => ({ sections: new Map<UniqueIdentifier, SectionType>() }));
 
-      console.log("Fetch sections")
       const res = await apiClient.get<SectionResponseType[]>(`/projects/${projectId}/sections`);
       const _sectionsMap = new Map<UniqueIdentifier, SectionType>();
       const _taskMap = new Map<UniqueIdentifier, TaskType>();
@@ -79,12 +78,10 @@ const useSections = create<{
       return;
     }
     try {
-      console.log("update section")
       const res = await apiClient.put<SectionResponseType>(`/sections/${section.id}`, { section: section });
       set((state) => {
         const _section = res.data
         state.sections.set(_section.id, formatSection(_section));
-        console.log(section.id, Array.from(state.sections.values()).map(section => section.position))
         return {
           sections: cloneSections(state.sections)
         }
@@ -117,7 +114,6 @@ const useSections = create<{
   const addTask = async (sectionId: UniqueIdentifier, task: TaskType) => {
     sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
     try {
-      console.log("add task")
       const res = await apiClient.post<TaskType>(`/sections/${sectionId}/tasks`, { task: task });
       set((state) => {
         const _task = res.data
@@ -128,7 +124,6 @@ const useSections = create<{
           tasks: cloneTasks(state.tasks)
         }
       })
-      console.log("addTask called with sectionId:", sectionId, "and task:", task)
     } catch (error) {
       console.error(error);
     }
@@ -140,7 +135,6 @@ const useSections = create<{
       return;
     }
     try {
-      console.log("update task")
       const res = await apiClient.put<TaskType>(`/tasks/${task.id}`, { task: task });
       set((state) => {
         const _task = res.data
@@ -162,7 +156,6 @@ const useSections = create<{
   const deleteTask = async (sectionId: SectionId, taskId: TaskId) => {
     sectionId = typeof sectionId === 'string' ? parseInt(sectionId) : sectionId;
     try {
-      console.log("delete task")
       await apiClient.delete(`/tasks/${taskId}`)
       set((state) => {
         state.sections.get(sectionId)?.tasks.delete(taskId)
