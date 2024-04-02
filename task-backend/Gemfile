@@ -31,7 +31,8 @@ gem 'devise_token_auth'
 
 gem 'aws-sdk-rails'
 gem 'aws-sdk-bedrockruntime', '~> 1'
-# gem 'net-http'
+gem 'net-http', '0.3.2'
+gem 'uri', '0.10.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
