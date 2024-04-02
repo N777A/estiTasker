@@ -50,7 +50,6 @@ const ProjectTaskPage: NextPage = () => {
           <AutoTaskCreatorForm projectId={projectId} />
         </div>
         <SectionIndex />
-        <small>Icon by icons8.com</small>
       </div>
       <div className={`border-l-2 transition-all overflow-hidden ${taskId ? "w-96" : "w-0"}`}>
         <div className='flex items-center justify-end border-b-2 p-2 h-12'>
