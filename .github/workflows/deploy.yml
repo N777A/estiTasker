@@ -41,6 +41,7 @@ jobs:
 
       - name: Run RSpec Tests
         run: |
+          cd task-backend
           cp config/database.yml.ci config/database.yml
           bundle exec rspec
 

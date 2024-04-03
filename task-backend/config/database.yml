@@ -23,6 +23,7 @@ test:
   pool: 5
   username: user
   password: password
+  host: 127.0.0.1
 
 production:
   <<: *default
