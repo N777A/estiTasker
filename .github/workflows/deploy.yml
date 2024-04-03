@@ -41,7 +41,7 @@ jobs:
 
       - name: Run RSpec Tests
         run: |
-          cd task-backend
+          cp task-backend/config/database.yml.ci task-backend/config/database.yml
           bundle exec rspec
 
       - name: Build Docker Image
