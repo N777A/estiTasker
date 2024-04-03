@@ -18,11 +18,12 @@ development:
 test:
   <<: *default
   adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
-  database: <%= ENV['APP_DATABASE'] %>
-  username: <%= ENV['APP_DATABASE_USERNAME'] %>
-  password: <%= ENV['APP_DATABASE_PASSWORD'] %>
-  host: <%= ENV['APP_DATABASE_HOST']%>
+  encoding: unicode
+  database: test_db
+  pool: 5
+  username: user
+  password: password
+  host: postgres
 
 production:
   <<: *default
