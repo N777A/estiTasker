@@ -23,11 +23,11 @@ jobs:
           gem install bundler -v 2.4.22
           bundle install --jobs 4 --retry 3
 
-      # - name: Setup Test Database
-      #   run: |
-      #     cd task-backend
-      #     bundle exec rails db:create RAILS_ENV=test
-      #     bundle exec rails db:migrate RAILS_ENV=test
+      - name: Setup Test Database
+        run: |
+          cp task-backend/config/database.yml.ci task-backend/config/database.yml
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run RSpec Tests
         run: |
