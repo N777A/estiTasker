@@ -4,8 +4,7 @@ class Api::V1::LlmController < ApplicationController
 
   def create_tasks
     @tasks = invoke(
-      "Human: Break down to Tasks based on description. Ensure that the sum of the estimated times for these new tasks does not exceed the total estimated time of 'originalTaskEstimatedTime', if `originalTaskEstimatedTime` is provided.
-      Estimate Time for each task.
+      "Human: Break down to Tasks based on description. Estimate Time for each task.
       Follow output-format and wrap result in <output></output> tag. output in Japanese.
       <description>
       #{params[:input]}

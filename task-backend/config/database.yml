@@ -1,19 +1,23 @@
 default: &default
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
-  database: <%= ENV['APP_DATABASE'] %>
-  username: <%= ENV['APP_DATABASE_USERNAME'] %>
-  password: <%= ENV['APP_DATABASE_PASSWORD'] %>
-  host: <%= ENV['APP_DATABASE_HOST']%>
+  adapter: mysql2
+  encoding: utf8
+  collation: utf8_general_ci
+  pool: 5
+  host: <%= ENV['MYSQL_HOST'] || 'localhost' %>
+  username: <%= ENV['MYSQL_USERNAME'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || '' %>
+  socket: /tmp/mysql.sock
 
 development:
   <<: *default
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
-  database: <%= ENV['APP_DATABASE'] %>
-  username: <%= ENV['APP_DATABASE_USERNAME'] %>
-  password: <%= ENV['APP_DATABASE_PASSWORD'] %>
-  host: <%= ENV['APP_DATABASE_HOST']%>
+  adapter: mysql2
+  encoding: utf8
+  collation: utf8_general_ci
+  pool: 5
+  host: <%= ENV['MYSQL_HOST'] || 'localhost' %>
+  username: <%= ENV['MYSQL_USERNAME'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || '' %>
+  socket: /tmp/mysql.sock
 
 test:
   <<: *default
