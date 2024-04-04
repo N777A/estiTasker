@@ -28,7 +28,7 @@ const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) =
   const handleClick = async () => {
     try {
       setIsCreating(true)
-      const formatInfo = { title: task.title, description: task.description, estimatedTime: task.estimated_time }
+      const formatInfo = { title: task.title, description: task.description, originalTaskEstimatedTime: task.estimated_time }
       const formatInfoString = JSON.stringify(formatInfo);
       const aiTasks = await createTasks(formatInfoString)
 
