@@ -6,6 +6,10 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations: 'api/v1/auth/registrations'
       }
+      
+      devise_scope :api_v1_user do
+        post 'auth/guest_sign_in', to: 'auth/session#guest_sign_in'
+      end
 
       namespace :auth do
         resources :sessions, only: %i[index]
@@ -32,5 +36,4 @@ Rails.application.routes.draw do
       end
     end
   end
-root to: 'api/v1/projects#index'
 end

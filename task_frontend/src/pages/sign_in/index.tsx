@@ -6,8 +6,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -16,8 +14,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { setCookie, destroyCookie } from "nookies";
 import router from 'next/router';
 import apiClient from '../../apiClient'
-import axios, { AxiosError } from 'axios';
-import { Alert } from '@mui/material';
+import axios from 'axios';
+import { Alert, Link } from '@mui/material';
+import guestLogin from '@/src/guest';
 
 const defaultTheme = createTheme();
 
@@ -46,7 +45,6 @@ export default function SignIn() {
         setCookie(null, "access-token", response.headers["access-token"], {
           path: "/",
         });
-
         router.push("/projects");
       } catch (err) {
         destroyCookie(null, "uid");
@@ -63,6 +61,14 @@ export default function SignIn() {
       }
     })();
   };
+  const handleGuestLogin = async () => {
+    const success = await guestLogin();
+    if (success) {
+      router.push("/projects");
+    } else {
+      console.error('Guest login failed')
+    }
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -124,20 +130,16 @@ export default function SignIn() {
             >
               ログイン
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  パスワードをお忘れですか？
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="../sign_up" variant="body2">
-                  {"新規登録"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
+        <Link href="../sign_up" variant="body2">
+          {"新規登録はこちら"}
+        </Link>
+        <Button 
+          onClick={handleGuestLogin}
+        >
+          ゲストとしてログインはこちら
+        </Button>
       </Container>
     </ThemeProvider>
   );
