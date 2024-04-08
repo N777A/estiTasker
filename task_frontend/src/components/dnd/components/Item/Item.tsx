@@ -5,10 +5,8 @@ import type { Transform } from '@dnd-kit/utilities';
 import { Action, Handle, Remove } from './components';
 import styles from './Item.module.css';
 import useSections from '@/src/hooks/useSections';
-import { BLANK_TASK, TaskType, is_new_task } from '@/src/types/Task';
-import { Button, Checkbox, Drawer, Link, TextField, debounce } from '@mui/material';
-import { MoreVert } from '@mui/icons-material';
-import EditTaskForm from '../../../task/EditTaskForm'
+import { BLANK_TASK, TaskType } from '@/src/types/Task';
+import { TextField, debounce } from '@mui/material';
 import AutoTaskCreator from '@/src/components/Llm/AutoTaskCreator';
 import useTimeConverter from '@/src/hooks/useTimeConverter'
 import { TaskId } from '@/src/types/Section';

@@ -11,7 +11,7 @@ class Api::V1::LlmController < ApplicationController
       </description>
       <output-format>
       [
-        { \"title\": string, \"description\": string, \"estimated\": string (format: \"HH:mm\"), \"estimated_time\" : number }
+        { \"title\": string, \"description\": string, \"estimated_time\": string (format: \"HH:mm\") }
       ]
       <output-format>
       Breakdown task into small tasks. For example if it is frontend, break tasks to page, feature, and component level.

@@ -1,6 +1,7 @@
 const useTimeConverter  =  ():[
   (defaultMinutes: number) => string,
-  (defaultMinutes: number) => { hours: number; minutes: number }
+  (defaultMinutes: number) => { hours: number; minutes: number },
+  (defaultTime: string) => number,
 ] => {
 
   const convertMinutesToHours = (defaultMinutes: number) => {
@@ -18,7 +19,14 @@ const useTimeConverter  =  ():[
     return { hours, minutes }
   }
 
-  return [convertMinutesToHours, hoursAndMinutes]
+  const convertToMinutes = (defaultTime: string) => {
+    const [hoursStr, minutesStr] = defaultTime.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+    return hours * 60 + minutes;
+  }
+
+  return [convertMinutesToHours, hoursAndMinutes, convertToMinutes]
 }
 
 export default useTimeConverter;

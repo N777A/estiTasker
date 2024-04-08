@@ -4,6 +4,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useLlm } from "@/src/hooks/useLlm";
 import useSections from "@/src/hooks/useSections";
 import { BLANK_SECTION } from "@/src/types/Section";
+import useTimeConverter from "@/src/hooks/useTimeConverter";
 
 const style = {
   position: 'absolute',
@@ -30,7 +31,8 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
   const [isDisabledButton, setIsDisabledButton] = useState(false);
   const { addSection, addTask } = useSections();
   const { createTasks } = useLlm;
-  
+  const [, , convertMinutes] = useTimeConverter(); 
+
   const handleTitleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setAiTitle(e.target.value)
   }
@@ -53,6 +55,8 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
         let newPosition = 1;
         for (const task of aiTasks.data.tasks) {
           task.position  = newPosition;
+          const minutes = convertMinutes(task.estimated_time)
+          task.estimated_time = minutes
           await addTask(addedSectionId, task);
           newPosition++;
         }

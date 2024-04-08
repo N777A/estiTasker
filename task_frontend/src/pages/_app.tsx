@@ -17,7 +17,6 @@ dayjs.locale('ja')
 function MyApp(props: AppProps) {
   const router = useRouter();
   const currentPath = router.pathname;
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { Component, pageProps } = props;
 
   useEffect(() => {
