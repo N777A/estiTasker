@@ -37,11 +37,8 @@ const ArchiveIndex:React.FC = () => {
   const handleUnarchiveTask = async (task: TaskType) => {
     const res = getTask(602)
     const updatedTask = { ...task, archive: false };
-    console.log('😄', task)
-    console.log(res)
     try {
       await updateTask(updatedTask)
-      console.log('🌸ß')
       setTasks(prev => prev.filter(t => t.id !== task.id))
     } catch (error) {
       console.log('タスクのアーカイブ解除に失敗', error)

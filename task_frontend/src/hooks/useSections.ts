@@ -110,9 +110,7 @@ const useSections = create<{
   }
 
   const getTask = (taskId: TaskId): TaskType | undefined => {
-    console.log('taskId', taskId) // taskIdは格納されている
-    let task = get().tasks.get(taskId) || get().archives.get(taskId);// ここをarchivesに変更すると下のconsoleで格納されていることが確認できる
-    console.log('getTask',task) // この時点で格納されてない
+    let task = get().tasks.get(taskId) || get().archives.get(taskId);
     return task ? JSON.parse(JSON.stringify(task)) : undefined;
   }
 
@@ -136,14 +134,10 @@ const useSections = create<{
 
   const updateTask = async (task: TaskType) => {
     const _old_value = await getTask(task.id)
-    console.log('😴', task)
-    console.log('_old_value:', _old_value);
     if (!_old_value || is_tasks_equal(_old_value, task)) {
-      console.log('実行っっっs')
       return;
     }
     try {
-      console.log('実行ß')
       const res = await apiClient.put<TaskType>(`/tasks/${task.id}`, { task: task });
       set((state) => {
         const _task = res.data
