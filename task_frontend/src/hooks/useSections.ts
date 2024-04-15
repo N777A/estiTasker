@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import apiClient from '../apiClient';
 import { SectionId, SectionResponseType, SectionType, TaskId, cloneSection, cloneSections, cloneTasks, formatSection, is_sections_equal } from '../types/Section';
-import { TaskType, is_tasks_equal } from '../types/Task';
+import { ArchiveResponseType, TaskType, is_tasks_equal } from '../types/Task';
 import { UniqueIdentifier } from '@dnd-kit/core';
 
 const useSections = create<{
   currentProjectId: number,
   sections: Map<SectionId, SectionType>,
   tasks: Map<TaskId, TaskType>,
+  archives: Map<TaskId, TaskType>,
   fetchSections: (projectId: number) => void,
   getSection: (sectionId: UniqueIdentifier) => SectionType | undefined,
   addSection: (section: SectionType) => Promise<number | null>,
@@ -17,11 +18,13 @@ const useSections = create<{
   addTask: (sectionId: SectionId, task: TaskType) => Promise<void>,
   updateTask: (task: TaskType) => Promise<void>,
   deleteTask: (sectionId: SectionId, taskId: TaskId) => void,
+  fetchArchivedTasks: (projectId: number) => Promise<void>,
 }>((set, get) => {
   const INIT_STATE = {
     currentProjectId: 0,
     sections: new Map<UniqueIdentifier, SectionType>(),
     tasks: new Map<UniqueIdentifier, TaskType>(),
+    archives: new Map<UniqueIdentifier, TaskType>(),
   }
 
   const fetchSections = async (projectId: number) => {
@@ -107,7 +110,9 @@ const useSections = create<{
   }
 
   const getTask = (taskId: TaskId): TaskType | undefined => {
-    let task = get().tasks.get(taskId)
+    console.log('taskId', taskId) // taskIdは格納されている
+    let task = get().tasks.get(taskId) || get().archives.get(taskId);// ここをarchivesに変更すると下のconsoleで格納されていることが確認できる
+    console.log('getTask',task) // この時点で格納されてない
     return task ? JSON.parse(JSON.stringify(task)) : undefined;
   }
 
@@ -130,11 +135,15 @@ const useSections = create<{
   }
 
   const updateTask = async (task: TaskType) => {
-    const _old_value = getTask(task.id)
+    const _old_value = await getTask(task.id)
+    console.log('😴', task)
+    console.log('_old_value:', _old_value);
     if (!_old_value || is_tasks_equal(_old_value, task)) {
+      console.log('実行っっっs')
       return;
     }
     try {
+      console.log('実行ß')
       const res = await apiClient.put<TaskType>(`/tasks/${task.id}`, { task: task });
       set((state) => {
         const _task = res.data
@@ -170,6 +179,25 @@ const useSections = create<{
     }
   }
 
+  const fetchArchivedTasks = async (projectId: number) => {
+    try {
+      set((state) => ({...state, archives: new Map<UniqueIdentifier, TaskType>() }));
+
+      const res = await apiClient.get<ArchiveResponseType[]>(`/projects/${projectId}/tasks/archive`);
+      const _archivesMap = new Map<UniqueIdentifier, TaskType>();
+      res.data.forEach(_archive => {
+        _archivesMap.set(_archive.id, _archive);
+      
+      });
+      set((state) => ({
+        ...state,
+        archives: _archivesMap
+      }))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return {
     ...INIT_STATE,
     fetchSections,
@@ -181,6 +209,7 @@ const useSections = create<{
     addTask,
     updateTask,
     deleteTask,
+    fetchArchivedTasks,
   }
 })
 

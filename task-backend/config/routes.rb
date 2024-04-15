@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
       resources :projects do
         resources :sections, only: [:index, :create]
+        get 'tasks/archive', to: 'tasks#archive'
       end
     
       resources :sections, only: [:update, :destroy] do

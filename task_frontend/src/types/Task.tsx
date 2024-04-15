@@ -9,6 +9,19 @@ export type TaskType = {
   section_id: SectionId;
   position: number;
   estimated_time: number;
+  archive: boolean;
+}
+
+export type ArchiveResponseType = {
+  id: number;
+  title: string;
+  description: string;
+  status: number;
+  due_date: string;
+  section_id: SectionId;
+  position: number;
+  estimated_time: number;
+  archive: boolean;
 }
 
 export const BLANK_TASK: TaskType = {
@@ -20,6 +33,7 @@ export const BLANK_TASK: TaskType = {
   section_id: 0,
   position: 0,
   estimated_time: 0,
+  archive: false,
 }
 
 export const is_new_task = (task: TaskType): boolean => {

@@ -20,7 +20,6 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def update
-    # @section = Section.find(params[:section_id])
     @task = Task.find(params[:id])
 
     if @task.update(task_update_params)
@@ -31,7 +30,6 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def destroy
-    # @section = Section.find(params[:section_id])
     @task = Task.find(params[:id])
     @task.destroy
   end
@@ -47,6 +45,13 @@ class Api::V1::TasksController < ApplicationController
     end
   end
 
+  def archive
+    @user = current_api_v1_user
+    @project = @user.projects.find(params[:project_id])
+    @archives = @project.tasks.where(archive: true)
+    render json: @archives
+  end
+
   private
 
   def set_section
@@ -54,11 +59,11 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time)
+    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time, :archive, :created_at)
   end
  
   def task_update_params
-    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time)
+    params.require(:task).permit(:title, :description, :due_date, :position, :section_id, :status, :estimated_time, :archive, :updated_at)
   end
 
   def calculate_new_position(previous_id, next_id)

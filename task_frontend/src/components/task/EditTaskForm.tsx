@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, TextField, debounce } from "@mui/material";
+import { Box, Button, TextField, debounce } from "@mui/material";
 import useSections from "@/src/hooks/useSections";
 import { BLANK_TASK, TaskType } from "@/src/types/Task";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -10,6 +10,7 @@ import { TaskId } from "@/src/types/Section";
 import "react-widgets/styles.css";
 import NumberPicker from "react-widgets/NumberPicker";
 import useTimeConverter from "@/src/hooks/useTimeConverter";
+import router from "next/router";
 
 export type EditTaskFormProps = {
   taskId: TaskId,
@@ -25,7 +26,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
     setEditTask(getTask(taskId) || BLANK_TASK);
   }, [taskId, sections])
 
-
   useEffect(() => {
     const times = hoursAndMinutes(Number(editTask.estimated_time));
     setNewHours(times.hours);
@@ -35,6 +35,29 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
   const [newhours, setNewHours] = useState(0);
   const [newMinutes, setNewMinutes] = useState(0)
 
+  const navigateTask = () => {
+    const projectId = router.query.projectId
+    router.push({
+      query: {
+        projectId: projectId,
+      }
+    },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  const handleArchive = async () => {
+    const updatedTask = { ...editTask, archive: true }
+    
+    try {
+      await updateTask(updatedTask)
+      setEditTask(updatedTask)
+      navigateTask()
+    } catch (error) {
+      console.log('タスクのアーカイブ追加に失敗', error)
+    } 
+  }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -151,6 +174,11 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
         }}
         onBlur={handleBlur}
       />
+      {editTask.archive ?
+        <Button>削除</Button>
+        :
+        <Button onClick={handleArchive}>アーカイブ</Button>
+      }
     </div>
   )
 }

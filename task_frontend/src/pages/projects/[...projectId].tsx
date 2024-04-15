@@ -5,7 +5,7 @@ import SectionIndex from "@/src/components/section/SectionIndex";
 import EditProjectForm from "@/src/components/project/EditProjectForm";
 import DeleteProjectButton from "@/src/components/project/DeleteProjectButton";
 import IconMenu from "@/src/components/common/IconMenu";
-import { MenuItem } from "@mui/material";
+import { Link, MenuItem } from "@mui/material";
 import useProjects from "@/src/hooks/useProjects";
 import EditTaskForm from "@/src/components/task/EditTaskForm";
 import IconButton from '@mui/material/IconButton';
@@ -38,7 +38,6 @@ const ProjectTaskPage: NextPage = () => {
       <div className='grow'>
         <div className='flex items-center border-b-2 p-2 h-12'>
           <h2 className="text-lg mr-4">{project?.title}</h2>
-
           <IconMenu>
             <MenuItem>
               <EditProjectForm project={project} />
@@ -48,6 +47,7 @@ const ProjectTaskPage: NextPage = () => {
             </MenuItem>
           </IconMenu>
           <AutoTaskCreatorForm projectId={projectId} />
+          <Link href={`../projects/${projectId}/Archive`}>アーカイブ</Link>
         </div>
         <SectionIndex />
       </div>

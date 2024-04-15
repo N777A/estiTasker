@@ -491,7 +491,10 @@ export function MultipleContainers({
               onRemove={() => handleRemove(containerId)}
             >
               <SortableContext items={items[containerId]} strategy={strategy}>
-                {items[containerId].map((value, index) => {
+                {items[containerId].filter(taskId => {
+                  const task = getTask(taskId)
+                  return task && !task.archive
+                }).map((value, index) => {
                   return (
                     <SortableItem
                       disabled={isSortingContainer}

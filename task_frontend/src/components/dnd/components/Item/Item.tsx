@@ -203,13 +203,7 @@ export const Item = React.memo(
             {...props}
             tabIndex={!handle ? 0 : undefined}
           >
-            {/* {task ? task.title : ''} */}
             {handle ? <Handle {...handleProps} {...listeners} /> : null}
-            {/* <Checkbox
-              checked={task.status === 2}
-              onChange={handleStatusChange}
-              disabled={is_new_task(task)}
-            /> */}
             {isEditing ? (
               <TextField
                 name="title"
@@ -245,13 +239,13 @@ export const Item = React.memo(
             )}
             <h3>{convertedTime}</h3>
             <span className={styles.Actions}>
-              {onRemove ? (
-                <Remove className={styles.Remove} onClick={onRemove} />
-              ) : null}
               <Action onClick={() => navigateTask(task.id)}>
                 <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
               </Action>
               <AutoTaskCreator task={task} sectionId={task.section_id} />
+              {onRemove ? (
+                <Remove className={styles.Remove} onClick={onRemove} />
+              ) : null}
             </span>
           </div>
         </li>
