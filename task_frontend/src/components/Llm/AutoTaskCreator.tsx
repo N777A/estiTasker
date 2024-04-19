@@ -58,7 +58,7 @@ const AutoTaskCreator = React.memo(({ task, sectionId }: AutoTaskCreatorProps) =
       }
       setIsCreating(false)
     } catch (err) {
-      console.log(err)
+      console.error(err)
       setIsCreating(false)
     }
   }

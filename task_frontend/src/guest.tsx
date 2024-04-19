@@ -16,7 +16,7 @@ const guestLogin = async () => {
     });
     return true;
   } catch (error) {
-    console.log('ログインに失敗しました', error);
+    console.error('ログインに失敗しました', error);
     return false;
   }
 }

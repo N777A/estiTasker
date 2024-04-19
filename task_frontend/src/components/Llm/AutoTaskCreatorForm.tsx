@@ -67,7 +67,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
       setIsCreating(false)
       setIsDisabledButton(false)
     } catch (err) {
-      console.log(err)
+      console.error('タスクの自動作成に失敗しました', err)
       setIsCreating(false)
     }
   }

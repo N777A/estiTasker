@@ -1,4 +1,3 @@
-import { TaskType } from "../types/Task";
 import apiClient from '../apiClient';
 
 export const useLlm = {
@@ -7,15 +6,17 @@ export const useLlm = {
       const res = await apiClient.post('/llm/create_tasks', { input: description })
       return res;
     } catch (err) {
-      console.error(err)
+      console.error('タスクの自動作成に失敗しました', err)
     }
   },
-  estimateTaskTime: async (task: TaskType) => {
+
+  adviceTask: async (description: string) => {
     try {
-      const res = await apiClient.post('/llm/estimate_task_time', { task: task })
+      const res = await apiClient.post('/llm/advice_task', { input: description })
       return res;
     } catch (err) {
-      console.error(err)
+      console.error('タスクのアドバイスの生成に失敗しました', err)
+      return null;
     }
-  }
+  },
 }

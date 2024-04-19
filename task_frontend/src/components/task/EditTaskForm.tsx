@@ -55,7 +55,7 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
       setEditTask(updatedTask)
       navigateTask()
     } catch (error) {
-      console.log('タスクのアーカイブ追加に失敗', error)
+      console.error('タスクのアーカイブ追加に失敗', error)
     } 
   }
 

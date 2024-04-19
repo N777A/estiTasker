@@ -606,7 +606,7 @@ export function MultipleContainers({
         containers.filter((id) => id !== containerID)
       )
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -618,7 +618,7 @@ export function MultipleContainers({
         return items
       })
     } catch (err) {
-      console.log(err)
+      console.error('タスクのリムーブに失敗しました', err)
     }
   }
 

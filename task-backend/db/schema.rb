@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_10_025048) do
+ActiveRecord::Schema.define(version: 2024_04_16_053412) do
+
+  create_table "advices", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.text "advice_text"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["task_id"], name: "index_advices_on_task_id"
+  end
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
     t.string "title"
@@ -71,6 +79,7 @@ ActiveRecord::Schema.define(version: 2024_04_10_025048) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "advices", "tasks"
   add_foreign_key "projects", "users"
   add_foreign_key "sections", "projects"
   add_foreign_key "tasks", "sections"

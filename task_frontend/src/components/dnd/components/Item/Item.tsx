@@ -12,6 +12,7 @@ import useTimeConverter from '@/src/hooks/useTimeConverter'
 import { TaskId } from '@/src/types/Section';
 import { useRouter } from 'next/router';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import AdviceCreator from '@/src/components/Llm/AdviceCreator';
 
 export interface Props {
   dragOverlay?: boolean;
@@ -243,6 +244,7 @@ export const Item = React.memo(
                 <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
               </Action>
               <AutoTaskCreator task={task} sectionId={task.section_id} />
+              <AdviceCreator task={task} sectionId={task.section_id} />
               {onRemove ? (
                 <Remove className={styles.Remove} onClick={onRemove} />
               ) : null}

@@ -20,21 +20,21 @@ class Api::V1::LlmController < ApplicationController
     render json: { tasks: @tasks }
   end
   
-  # def estimate_task_time
-  #   @task = invoke(
-  #     "Human: Estimate the time it will take to complete the following task in hour. 
-  #     Follow output-format and wrap result in <output></output> tag.
-  #     <task>
-  #     #{params[:task]}
-  #     </task>
-  #     <output-format>
-  #     { \"title\": string, \"time\": number (time to coplete in hour) }
-  #     </output-format>
-  #     Assistant:"
-  #   )
-    
-  #   render json: { task: @task }
-  # end
+  def advice_task
+    @advice = invoke(
+      "Based on the task description, generate three practical advice that could help in effectively completing the task. Consider factors like task complexity, necessary skills, and potential obstacles. Also, provide a breakdown of steps or considerations that might be useful in Japanese. Enclose with <output> when outputting. Output in Japanese. 
+      <description>
+      #{params[:input]}
+      </description>
+      <output-format>
+      [
+        { \"advice\": string }
+      ]
+      <output-format>"
+    )
+
+    render json: { advice: @advice }
+  end
 
   private
 
@@ -65,7 +65,6 @@ class Api::V1::LlmController < ApplicationController
     completion = parsed_body['content'][0]['text']
     puts completion.match(/<output>(.*?)<\/output>/m)
     json_string = completion.match(/<output>(.*?)<\/output>/m)[1]
-    JSON.parse(json_string)
-
+    JSON.parse(json_string.strip)
   end
 end

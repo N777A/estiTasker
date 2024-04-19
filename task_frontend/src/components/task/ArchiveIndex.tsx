@@ -14,7 +14,7 @@ const ArchiveIndex:React.FC = () => {
       await deleteTask(task.section_id, task.id);
       setTasks(prev => prev.filter(t => t.id !== task.id));
     } catch (error) {
-      console.log('タスク削除失敗', error)
+      console.error('タスク削除失敗', error)
     }
   }
 
@@ -29,19 +29,18 @@ const ArchiveIndex:React.FC = () => {
 
         setTasks([]);
       } catch (error) {
-        console.log('全てのアーカイブの削除に失敗しました', error)
+        console.error('全てのアーカイブの削除に失敗しました', error)
       }
     }
   }
 
   const handleUnarchiveTask = async (task: TaskType) => {
-    const res = getTask(602)
     const updatedTask = { ...task, archive: false };
     try {
       await updateTask(updatedTask)
       setTasks(prev => prev.filter(t => t.id !== task.id))
     } catch (error) {
-      console.log('タスクのアーカイブ解除に失敗', error)
+      console.error('タスクのアーカイブ解除に失敗', error)
       throw error;
     }
   }

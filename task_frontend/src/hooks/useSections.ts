@@ -1,14 +1,17 @@
 import { create } from 'zustand';
 import apiClient from '../apiClient';
 import { SectionId, SectionResponseType, SectionType, TaskId, cloneSection, cloneSections, cloneTasks, formatSection, is_sections_equal } from '../types/Section';
-import { ArchiveResponseType, TaskType, is_tasks_equal } from '../types/Task';
+import { TaskType, is_tasks_equal } from '../types/Task';
 import { UniqueIdentifier } from '@dnd-kit/core';
+import { AdviceType } from '../types/Advice'
+import { AdviceId } from '../types/Advice'
 
 const useSections = create<{
   currentProjectId: number,
   sections: Map<SectionId, SectionType>,
   tasks: Map<TaskId, TaskType>,
   archives: Map<TaskId, TaskType>,
+  advices: Map<AdviceId, AdviceType>,
   fetchSections: (projectId: number) => void,
   getSection: (sectionId: UniqueIdentifier) => SectionType | undefined,
   addSection: (section: SectionType) => Promise<number | null>,
@@ -19,12 +22,15 @@ const useSections = create<{
   updateTask: (task: TaskType) => Promise<void>,
   deleteTask: (sectionId: SectionId, taskId: TaskId) => void,
   fetchArchivedTasks: (projectId: number) => Promise<void>,
+  fetchAdvices: (taskId: number) => Promise<void>,
+  addAdvice: (taskId: number, advice: AdviceType) => Promise<void>
 }>((set, get) => {
   const INIT_STATE = {
     currentProjectId: 0,
     sections: new Map<UniqueIdentifier, SectionType>(),
     tasks: new Map<UniqueIdentifier, TaskType>(),
     archives: new Map<UniqueIdentifier, TaskType>(),
+    advices: new Map<UniqueIdentifier, AdviceType>(),
   }
 
   const fetchSections = async (projectId: number) => {
@@ -177,7 +183,7 @@ const useSections = create<{
     try {
       set((state) => ({...state, archives: new Map<UniqueIdentifier, TaskType>() }));
 
-      const res = await apiClient.get<ArchiveResponseType[]>(`/projects/${projectId}/tasks/archive`);
+      const res = await apiClient.get<TaskType[]>(`/projects/${projectId}/tasks/archive`);
       const _archivesMap = new Map<UniqueIdentifier, TaskType>();
       res.data.forEach(_archive => {
         _archivesMap.set(_archive.id, _archive);
@@ -189,6 +195,43 @@ const useSections = create<{
       }))
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const fetchAdvices = async (taskId: number) => {
+    try {
+      set((state) => ({...state, advices: new Map<UniqueIdentifier, AdviceType>() }));
+
+      const res = await apiClient.get<AdviceType[]>(`/tasks/${taskId}/advices`);
+      const _advicesMap = new Map<UniqueIdentifier, AdviceType>();
+      res.data.forEach(_advice => {
+        _advicesMap.set(_advice.id, _advice);
+      
+      });
+      set((state) => ({
+        ...state,
+        advices: _advicesMap
+      }))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const addAdvice = async (taskId: UniqueIdentifier, advice: AdviceType) => {
+    taskId = typeof taskId === 'string' ? parseInt(taskId) : taskId;
+    try {
+      const res = await apiClient.post<AdviceType>(`/tasks/${taskId}/advices`, { advice: advice });
+      set((state) => {
+        const _advice = res.data
+        const updatedAdvices = new Map(state.advices);
+        updatedAdvices.set(_advice.id, _advice)
+        return {
+          ...state,
+          advices: updatedAdvices
+        }
+      })
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -204,6 +247,8 @@ const useSections = create<{
     updateTask,
     deleteTask,
     fetchArchivedTasks,
+    fetchAdvices,
+    addAdvice,
   }
 })
 

@@ -27,12 +27,14 @@ Rails.application.routes.draw do
         resources :tasks, only: [:index, :create]
       end
 
-      resources :tasks, only: [:update, :destroy]
+      resources :tasks, only: [:update, :destroy] do
+        resources :advices, only: [:index, :create]
+      end
 
       resources :llm, only: [], controller: 'llm' do
         collection do
           post :create_tasks
-          post :estimate_task_time
+          post :advice_task
         end
       end
     end

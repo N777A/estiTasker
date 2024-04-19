@@ -12,18 +12,6 @@ export type TaskType = {
   archive: boolean;
 }
 
-export type ArchiveResponseType = {
-  id: number;
-  title: string;
-  description: string;
-  status: number;
-  due_date: string;
-  section_id: SectionId;
-  position: number;
-  estimated_time: number;
-  archive: boolean;
-}
-
 export const BLANK_TASK: TaskType = {
   id: -1, // 0 の時は初期化状態。データベース登録後、正しい ID になる。
   title: "無題のタスク",
