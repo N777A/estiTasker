@@ -244,7 +244,7 @@ export const Item = React.memo(
                 <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
               </Action>
               <AutoTaskCreator task={task} sectionId={task.section_id} />
-              <AdviceCreator task={task} sectionId={task.section_id} />
+              <AdviceCreator task={task} />
               {onRemove ? (
                 <Remove className={styles.Remove} onClick={onRemove} />
               ) : null}

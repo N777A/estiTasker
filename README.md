@@ -33,6 +33,7 @@
 - AWS
   - AWS SDK
   - AWS Bedrock
+- Claude v3 Haiku
 - Docker/Docker-compose
 - Github Actions
 - Heroku
@@ -55,6 +56,12 @@
   - タスクタイトル、memo、期日を設定
   - タスク見積時間を設定、編集
   - タスクの並べ替え(dnd-kit)
-- AIによる自動作成機能(AWS Bedrock)
+- アーカイブ機能
+  - タスクをアーカイブ
+  - 一括削除
+- AIによる自動作成機能(AWS Bedrock, Claude v3 Haiku)
   - タスクのタイトルと説明を入力すると、AIがタスクと作業時間見積りを自動作成
   - 既存のタスクを更に細分化して自動作成
+- AIによるタスクについてのアドバイス機能(AWS Bedrock, Claude v3 Haiku)
+  - タスクについての効果的なアドバイスを生成
+  - アドバイスの一覧表示
