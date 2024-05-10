@@ -48,10 +48,17 @@ class Api::V1::TasksController < ApplicationController
   def archive
     @user = current_api_v1_user
     @project = @user.projects.find(params[:project_id])
-    @archives = @project.tasks.where(archive: true)
-    render json: @archives
+    @archives = @project.tasks.where.not(archive: nil)
+    @unArchives = @project.tasks.where(archive: nil)
+    @overdue_tasks = @project.tasks.where('due_date < ? ', Date.today)
+    @tasks = @project.tasks
+    render json: { archives: @archives, archives_count: @archives.count, unArchives_count: @unArchives.count, overdue_tasks_count: @overdue_tasks.count, tasks_count: @tasks.count }
   end
 
+  def chart
+    @user = current_api_v1_user
+    
+  end
   private
 
   def set_section

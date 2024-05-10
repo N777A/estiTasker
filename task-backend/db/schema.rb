@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_16_053412) do
+ActiveRecord::Schema.define(version: 2024_05_10_010029) do
 
   create_table "advices", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "task_id", null: false
@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(version: 2024_04_16_053412) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "section_id", null: false
     t.integer "estimated_time"
-    t.boolean "archive", default: false, null: false
+    t.date "archive"
     t.index ["section_id"], name: "index_tasks_on_section_id"
   end
 
@@ -67,8 +67,6 @@ ActiveRecord::Schema.define(version: 2024_04_16_053412) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.string "name"
-    t.string "nickname"
-    t.string "image"
     t.string "email"
     t.text "tokens"
     t.datetime "created_at", precision: 6, null: false

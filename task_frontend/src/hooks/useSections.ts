@@ -6,12 +6,24 @@ import { UniqueIdentifier } from '@dnd-kit/core';
 import { AdviceType } from '../types/Advice'
 import { AdviceId } from '../types/Advice'
 
+interface ArchiveResponse {
+  archives: TaskType[];
+  archives_count: number;
+  unArchives_count: number;
+  overdue_tasks_count: number;
+  tasks_count: number;
+}
+
 const useSections = create<{
   currentProjectId: number,
   sections: Map<SectionId, SectionType>,
   tasks: Map<TaskId, TaskType>,
   archives: Map<TaskId, TaskType>,
   advices: Map<AdviceId, AdviceType>,
+  archives_count: number,
+  unArchives_count: number,
+  overdue_tasks_count: number,
+  tasks_count: number,
   fetchSections: (projectId: number) => void,
   getSection: (sectionId: UniqueIdentifier) => SectionType | undefined,
   addSection: (section: SectionType) => Promise<number | null>,
@@ -31,6 +43,10 @@ const useSections = create<{
     tasks: new Map<UniqueIdentifier, TaskType>(),
     archives: new Map<UniqueIdentifier, TaskType>(),
     advices: new Map<UniqueIdentifier, AdviceType>(),
+    archives_count: 0,
+    unArchives_count: 0,
+    overdue_tasks_count: 0,
+    tasks_count: 0,
   }
 
   const fetchSections = async (projectId: number) => {
@@ -183,15 +199,19 @@ const useSections = create<{
     try {
       set((state) => ({...state, archives: new Map<UniqueIdentifier, TaskType>() }));
 
-      const res = await apiClient.get<TaskType[]>(`/projects/${projectId}/tasks/archive`);
+      const res = await apiClient.get<ArchiveResponse>(`/projects/${projectId}/tasks/archive`);
       const _archivesMap = new Map<UniqueIdentifier, TaskType>();
-      res.data.forEach(_archive => {
+      res.data.archives.forEach(_archive => {
         _archivesMap.set(_archive.id, _archive);
       
       });
       set((state) => ({
         ...state,
-        archives: _archivesMap
+        archives: _archivesMap,
+        archives_count: res.data.archives_count,
+        unArchives_count: res.data.unArchives_count,
+        overdue_tasks_count: res.data.overdue_tasks_count,
+        tasks_count: res.data.tasks_count
       }))
     } catch (err) {
       console.error(err)

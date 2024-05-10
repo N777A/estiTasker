@@ -5,7 +5,7 @@ import SectionIndex from "@/src/components/section/SectionIndex";
 import EditProjectForm from "@/src/components/project/EditProjectForm";
 import DeleteProjectButton from "@/src/components/project/DeleteProjectButton";
 import IconMenu from "@/src/components/common/IconMenu";
-import { Link, MenuItem } from "@mui/material";
+import { Button, Link, MenuItem } from "@mui/material";
 import useProjects from "@/src/hooks/useProjects";
 import EditTaskForm from "@/src/components/task/EditTaskForm";
 import IconButton from '@mui/material/IconButton';
@@ -47,7 +47,12 @@ const ProjectTaskPage: NextPage = () => {
             </MenuItem>
           </IconMenu>
           <AutoTaskCreatorForm projectId={projectId} />
-          <Link href={`../projects/${projectId}/Archive`}>アーカイブ</Link>
+          <Button>
+            <Link href={`../projects/${projectId}/Archive`}>アーカイブ</Link>
+          </Button>
+          <Button>
+            <Link href={`../projects/${projectId}/Dashboard`}>ダッシュボード</Link>
+          </Button>
         </div>
         <SectionIndex />
       </div>

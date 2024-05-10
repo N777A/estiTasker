@@ -35,7 +35,7 @@ const ArchiveIndex:React.FC = () => {
   }
 
   const handleUnarchiveTask = async (task: TaskType) => {
-    const updatedTask = { ...task, archive: false };
+    const updatedTask = { ...task, archive: null};
     try {
       await updateTask(updatedTask)
       setTasks(prev => prev.filter(t => t.id !== task.id))

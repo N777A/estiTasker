@@ -48,7 +48,8 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
   }
 
   const handleArchive = async () => {
-    const updatedTask = { ...editTask, archive: true }
+    const currentDate = new Date().toISOString();
+    const updatedTask = { ...editTask, archive: currentDate }
     
     try {
       await updateTask(updatedTask)

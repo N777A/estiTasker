@@ -9,7 +9,7 @@ export type TaskType = {
   section_id: SectionId;
   position: number;
   estimated_time: number;
-  archive: boolean;
+  archive: string | null;
 }
 
 export const BLANK_TASK: TaskType = {
@@ -21,7 +21,7 @@ export const BLANK_TASK: TaskType = {
   section_id: 0,
   position: 0,
   estimated_time: 0,
-  archive: false,
+  archive: null,
 }
 
 export const is_new_task = (task: TaskType): boolean => {

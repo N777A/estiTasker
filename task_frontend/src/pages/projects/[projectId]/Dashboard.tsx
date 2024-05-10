@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router'
-import ArchiveIndex from "@/src/components/task/ArchiveIndex"
 import BackIcon from '@mui/icons-material/ArrowBackIosNew'
 import Button from '@mui/material/Button'
 import { useEffect, useState } from 'react';
+import Charts from "@/src/components/dashboard/Charts";
 
-const Archive = () => {
+const Dashboard = () => {
   const router = useRouter();
-  const [projectId, setProjectId] = useState<number>();
+  const [, setProjectId] = useState<number>();
 
   useEffect(() => {
     if (router.isReady) {
@@ -21,9 +21,8 @@ const Archive = () => {
         <BackIcon />
         タスク一覧へ戻る
       </Button>
-      <ArchiveIndex />
+      <Charts />
     </div>
   )
 }
-
-export default Archive;
+export default Dashboard;
