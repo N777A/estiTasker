@@ -1,4 +1,4 @@
-class ChangeDataArchiveToTask < ActiveRecord::Migration[6.0]
+class RemoveArchiveToTask < ActiveRecord::Migration[6.0]
   def up
     remove_column :tasks, :archive
   end

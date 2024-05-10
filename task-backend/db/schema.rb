@@ -50,7 +50,6 @@ ActiveRecord::Schema.define(version: 2024_05_10_023536) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "section_id", null: false
     t.integer "estimated_time"
-    t.date "archive"
     t.index ["section_id"], name: "index_tasks_on_section_id"
   end
 
