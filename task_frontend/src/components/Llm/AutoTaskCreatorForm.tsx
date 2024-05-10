@@ -112,7 +112,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
           <TextField
             name="aiDescription"
             label="タスクの説明欄"
-            placeholder="タスクの説明欄(AIが参考にします)"
+            placeholder="タスクの説明欄(AIが参考にします) 300字以内"
             value={aiDescription}
             className="mb-2"
             fullWidth
@@ -120,6 +120,7 @@ const AutoTaskCreatorForm: React.FC<AutoTaskCreatorFormProps> = ({ projectId }) 
             color="secondary"
             multiline
             minRows="10"
+            inputProps={{ maxLength: 300 }}
           />
           <div>
             <Button onClick={resetForm}>キャンセル</Button>
