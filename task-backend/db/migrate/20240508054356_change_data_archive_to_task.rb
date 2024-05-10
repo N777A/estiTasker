@@ -1,17 +1,9 @@
 class ChangeDataArchiveToTask < ActiveRecord::Migration[6.0]
   def up
-    execute <<-SQL
-      ALTER TABLE tasks
-      ALTER COLUMN archive TYPE date
-      USING (CASE WHEN archive THEN CURRENT_DATE ELSE NULL END);
-    SQL
+    remove_column :tasks, :archive
   end
 
   def down
-    execute <<-SQL
-      ALTER TABLE tasks
-      ALTER COLUMN archive TYPE boolean
-      USING (CASE WHEN archive IS NOT NULL THEN 't'::boolean ELSE 'f'::boolean END);
-    SQL
+    add_column :tasks, :archive, :boolean, default: false, null: false
   end
 end
