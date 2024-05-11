@@ -18,6 +18,8 @@ export type EditTaskFormProps = {
 
 const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
   const [dateForPicker, setDateForPicker] = useState<Dayjs | null>(null);
+  const [newhours, setNewHours] = useState(0);
+  const [newMinutes, setNewMinutes] = useState(0)
   const { sections, getTask, updateTask } = useSections()
   const [editTask, setEditTask] = useState<TaskType>(BLANK_TASK)
   const [ ,hoursAndMinutes ] = useTimeConverter();
@@ -31,9 +33,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
     setNewHours(times.hours);
     setNewMinutes(times.minutes);
   }, [editTask]);
-
-  const [newhours, setNewHours] = useState(0);
-  const [newMinutes, setNewMinutes] = useState(0)
 
   const navigateTask = () => {
     const projectId = router.query.projectId
@@ -97,6 +96,8 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ taskId }) => {
     if (editTask && editTask.due_date) {
       const dayjsDate = dayjs(editTask.due_date)
       setDateForPicker(dayjsDate);
+    } else {
+      setDateForPicker(null);
     }
   }, [editTask])
 
