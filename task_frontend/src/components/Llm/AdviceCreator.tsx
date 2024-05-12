@@ -49,7 +49,6 @@ const AdviceCreator = ({ task }: AdviceCreatorProps) => {
         task_id: task.id
       }))
       await Promise.all(newAdvices.map(modefiedAdvice => addAdvice(task.id, modefiedAdvice)))
-      setAdvice(prevAdvices => [...prevAdvices, ...newAdvices])
       setIsCreating(false)
 
     } catch (err) {
@@ -110,7 +109,7 @@ const AdviceCreator = ({ task }: AdviceCreatorProps) => {
           {
             <>
               <p>{task.title}</p>
-              <Tooltip title='タスクに関連するアドバイスを生成ß'>
+              <Tooltip title='タスクに関連するアドバイスを生成'>
                 <IconButton
                   onClick={handleClick}
                   color='secondary'
