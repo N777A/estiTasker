@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const ArchiveIndex:React.FC = () => {
   const [tasks, setTasks] = useState<TaskType[]>([]);
-  const { archives, fetchArchivedTasks, deleteTask, updateTask, getTask } = useSections();
+  const { archives, fetchArchivedTasks, deleteTask, updateTask } = useSections();
   const router = useRouter();
 
   const handleDelete = async (task: TaskType) => {

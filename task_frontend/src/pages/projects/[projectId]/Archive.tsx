@@ -3,6 +3,7 @@ import ArchiveIndex from "@/src/components/task/ArchiveIndex"
 import BackIcon from '@mui/icons-material/ArrowBackIosNew'
 import Button from '@mui/material/Button'
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const Archive = () => {
   const router = useRouter();
@@ -19,8 +20,9 @@ const Archive = () => {
     <div>
       <Button aria-label="戻る" onClick={() => router.back()}>
         <BackIcon />
-        タスク一覧へ戻る
+        <Link href={`../projects/${projectId}`}>タスク一覧へ戻る</Link>
       </Button>
+
       <ArchiveIndex />
     </div>
   )

@@ -600,13 +600,16 @@ export function MultipleContainers({
   }
 
   async function handleRemove(containerID: UniqueIdentifier) {
-    try {
-      deleteSection(containerID);
-      setContainers((containers) =>
-        containers.filter((id) => id !== containerID)
-      )
-    } catch (err) {
-      console.error(err)
+    const confirmDelete = window.confirm("セクションを削除して、所属するタスクも削除しますがよろしいですか？");
+    if (confirmDelete) {
+      try {
+        deleteSection(containerID);
+        setContainers((containers) =>
+          containers.filter((id) => id !== containerID)
+        );
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
