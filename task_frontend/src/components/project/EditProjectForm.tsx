@@ -12,11 +12,16 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 600,
+  width: '70%',
   bgcolor: 'background.paper',
   border: '1px solid #000',
   boxShadow: 24,
   p: 4,
+};
+
+const textFieldStyle = {
+  maxHeight: '200px',
+  overflow: 'auto',
 };
 
 const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
@@ -72,6 +77,7 @@ const EditProjectForm: React.FC<EditProjectFormProps> = ({ project }) => {
             error={!!error.description}
             helperText={error.description}
             minRows="10"
+            inputProps={{ maxLength: 100, style: textFieldStyle }}
           />
           <div>
             <Button

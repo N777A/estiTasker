@@ -58,6 +58,7 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
             onChange={handleChange}
             error={!!error.title || !project.title}
             helperText={error.title ? error.title : (!project.title ? '入力が必須です' : null)}
+            inputProps={{ maxLength: 20 }}
           />
           <TextField
             name="description"
@@ -70,6 +71,7 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = () => {
             onChange={handleChange}
             error={!!error.description}
             helperText={error.description}
+            inputProps={{ maxLength: 100 }}
           />
           <div>
             <Button
