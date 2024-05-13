@@ -38,6 +38,7 @@ import { coordinateGetter as multipleContainersCoordinateGetter } from './multip
 
 import { Item, Container, ContainerProps } from './components';
 import useSections from '@/src/hooks/useSections';
+import { Button } from '@mui/material';
 
 export default {
   title: 'Presets/Sortable/Multiple Containers',
@@ -470,6 +471,7 @@ export function MultipleContainers({
           width: '100%'
         }}
       >
+        <Button onClick={handleAddColumn}>セクションを追加</Button>
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
           strategy={

@@ -14,12 +14,13 @@ import AutoTaskCreatorForm from "@/src/components/Llm/AutoTaskCreatorForm";
 
 const ProjectTaskPage: NextPage = () => {
   const router = useRouter();
-  const projectId: number = parseInt(router.query.projectId as string)
-  const taskId: number = parseInt(router.query.taskId as string)
+  const projectId = parseInt(router.query.projectId as string);
+  const taskId = parseInt(router.query.taskId as string);
   const { project, fetchProject } = useProjects();
+  
   useEffect(() => {
     if (projectId) fetchProject(projectId);
-  }, [projectId])
+  }, [projectId]);
 
   const navigateBack = () => {
     router.push({
@@ -30,13 +31,13 @@ const ProjectTaskPage: NextPage = () => {
     },
       undefined,
       { shallow: true }
-    )
+    );
   }
 
   return (
     <div className="flex">
-      <div className='grow'>
-        <div className='flex items-center border-b-2 p-2 h-12'>
+      <div className='grow relative z-0 p-3'>
+        <div className="flex items-center">
           <h2 className="text-lg mr-4">{project?.title}</h2>
           <IconMenu>
             <MenuItem>
@@ -47,20 +48,22 @@ const ProjectTaskPage: NextPage = () => {
             </MenuItem>
           </IconMenu>
           <AutoTaskCreatorForm projectId={projectId} />
-          <Button>
-            <Link href={`../projects/${projectId}/Archive`}>アーカイブ</Link>
-          </Button>
-          <Button>
-            <Link href={`../projects/${projectId}/Dashboard`}>ダッシュボード</Link>
-          </Button>
         </div>
+        <Button>
+          <Link href={`../projects/${projectId}/Archive`}>アーカイブ</Link>
+        </Button>
+        <Button>
+          <Link href={`../projects/${projectId}/Dashboard`}>ダッシュボード</Link>
+        </Button>
         <SectionIndex />
       </div>
-      <div className={`border-l-2 transition-all overflow-hidden ${taskId ? "w-96" : "w-0"}`}>
-        <div className='flex items-center justify-end border-b-2 p-2 h-12'>
-          <IconButton onClick={() => navigateBack()}><KeyboardTabIcon></KeyboardTabIcon></IconButton>
-        </div>
-        <EditTaskForm taskId={taskId}></EditTaskForm>
+      <div className={`border-l-2 transition-all overflow-hidden z-40 ${taskId ? "fixed right-0 top-0 h-full bg-white w-full sm:w-96" : "w-0"}`}>
+        {taskId && (
+          <div className='flex items-center justify-end border-b-2 p-2 h-12'>
+            <IconButton onClick={() => navigateBack()}><KeyboardTabIcon /></IconButton>
+          </div>
+        )}
+        <EditTaskForm taskId={taskId} />
       </div>
     </div>
   )
